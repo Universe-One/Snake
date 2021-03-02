@@ -10,8 +10,6 @@ const numCellsInRow = 20;
 const numCellsInColumn = 20;
 const cellWidth = canvas.width / numCellsInRow;
 const cellHeight = canvas.height / numCellsInColumn;
-//const initPos = 60;
-//let snakeLength = 4;
 
 function Snake() {
 	this.snakeLength = 4;
@@ -19,8 +17,8 @@ function Snake() {
 	this.yPosTail = height / 2;
 	this.xPosHead = this.xPosTail + (this.snakeLength * cellWidth);
 	this.yPosHead = height / 2;
+	this.direction = ""
 }
-
 
 function Food() {
 	this.firstDraw = true;
@@ -30,16 +28,47 @@ function Food() {
 	this.yPos = getRandom();
 }
 
-
-
 // Run the program
+
 let snake = new Snake();
 let food = new Food();
 drawWalls();
 drawSnake();
 drawFood();
-drawFood();
 
+// Control snake with key inputs
+window.addEventListener("keydown", function(e) {
+	switch (event.code) {
+		case "KeyW":
+		case "ArrowUp":
+			if (snake.direction !== "up") {
+				snake.direction = "up";
+				moveSnake();
+			}
+			break;
+		case "KeyD":
+		case "ArrowRight":
+			if (snake.direction !== "right") {
+				snake.direction = "right";
+				moveSnake();
+			}
+			break;
+		case "KeyS":
+		case "ArrowDown":
+			if (snake.direction !== "down") {
+				snake.direction = "down";
+				moveSnake();
+			}
+			break;
+		case "KeyA":
+		case "ArrowLeft":
+			if (snake.direction !== "left") {
+				snake.direction = "left";
+				moveSnake();
+			}
+			break;
+	}
+});
 
 function drawWalls() {
 	ctx.fillStyle = "rgb(0, 0, 0)";
@@ -58,6 +87,21 @@ function drawSnake() {
 	}
 }
 
+function moveSnake() {
+	//clearCanvas();
+	if (snake.direction === "up") {
+		console.log("up");
+	} else if (snake.direction === "right") {
+		console.log("right");
+	} else if (snake.direction === "down") {
+		console.log("down");
+	} else if (snake.direction === "left") {
+		console.log("left");
+	}
+}
+
+// If this is the first time drawing food, draw it at the specified default location. 
+// Otherwise, draw it at a random location.
 function drawFood() {
 	ctx.fillStyle = "rgb(255, 0, 0)"
 
@@ -67,6 +111,20 @@ function drawFood() {
 	} else {
 		ctx.fillRect(food.xPos, food.yPos, cellWidth, cellHeight);
 	}
+}
+
+function eatFood() {
+	clearCanvas();
+
+	//grow snake
+
+	drawSnake();
+	drawFood();
+}
+
+// Clears the whole 18 cell by 18 cell play area, leaving the walls in tact.
+function clearCanvas() {
+	ctx.clearRect(cellWidth, cellHeight, width - (cellWidth * 2), height - (cellHeight * 2));
 }
 
 function getRandom() {
