@@ -17,7 +17,7 @@ function Snake() {
 	this.yPosTail = height / 2;
 	this.xPosHead = this.xPosTail + (this.snakeLength * cellWidth);
 	this.yPosHead = height / 2;
-	this.direction = ""
+	this.direction = "right"
 }
 
 function Food() {
@@ -29,12 +29,17 @@ function Food() {
 }
 
 // Run the program
-
 let snake = new Snake();
 let food = new Food();
 drawWalls();
 drawSnake();
 drawFood();
+
+setInterval(gameLoop, 100);
+
+function gameLoop(timestamp) {
+	moveSnake();
+}
 
 // Control snake with key inputs
 window.addEventListener("keydown", function(e) {
@@ -43,28 +48,24 @@ window.addEventListener("keydown", function(e) {
 		case "ArrowUp":
 			if (snake.direction !== "up" && snake.direction !== "down") {
 				snake.direction = "up";
-				moveSnake();
 			}
 			break;
 		case "KeyD":
 		case "ArrowRight":
 			if (snake.direction !== "right" && snake.direction !== "left") {
 				snake.direction = "right";
-				moveSnake();
 			}
 			break;
 		case "KeyS":
 		case "ArrowDown":
 			if (snake.direction !== "down" && snake.direction !== "up") {
 				snake.direction = "down";
-				moveSnake();
 			}
 			break;
 		case "KeyA":
 		case "ArrowLeft":
 			if (snake.direction !== "left" && snake.direction !== "right") {
 				snake.direction = "left";
-				moveSnake();
 			}
 			break;
 	}
@@ -80,26 +81,42 @@ function drawWalls() {
 	}
 }
 
+// BUG HERE
 function drawSnake() {
 	ctx.fillStyle = "rgb(0, 192, 0)"
-	for (let i = snake.xPosTail; i < snake.xPosHead; i += cellWidth) {
-		ctx.fillRect(i, snake.yPosTail, cellWidth, cellHeight);
+
+	ctx.fillRect(snake.xPosHead, snake.yPosHead, cellWidth, cellHeight);
+	/*
+	if (snake.direction === "up" || snake.direction === "down") {
+		ctx.fillRect(snake.xPosHead, snake.yPosHead, cellWidth, cellHeight * snake.snakeLength);
+	} else if (snake.direction === "left" || snake.direction === "right") {
+		ctx.fillRect(snake.xPosHead, snake.yPosHead, cellWidth * snake.snakeLength, cellHeight);
+
 	}
+	*/
+	
+}
+
+function changeSnakeDirection() {
+
 }
 
 function moveSnake() {
-	//clearCanvas();
+	clearCanvas();
 	if (snake.direction === "up") {
+		snake.yPosHead -= cellHeight;
 		console.log("up");
 	} else if (snake.direction === "right") {
-		//snake.xPosHead += cellWidth;
+		snake.xPosHead += cellWidth;
 		console.log("right");
 	} else if (snake.direction === "down") {
+		snake.yPosHead += cellHeight;
 		console.log("down");
 	} else if (snake.direction === "left") {
-		//snake.xPosHead -= cellWidth;
+		snake.xPosHead -= cellWidth;
 		console.log("left");
 	}
+	drawSnake();
 }
 
 // If this is the first time drawing food, draw it at the specified default location. 
