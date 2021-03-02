@@ -21,11 +21,8 @@ function Snake() {
 }
 
 function Food() {
-	this.firstDraw = true;
-	this.xPosDefault = 320;
-	this.yPosDefault = height / 2;
-	this.xPos = getRandom();
-	this.yPos = getRandom();
+	this.xPos = 320;
+	this.yPos = height / 2;
 }
 
 // Run the program
@@ -38,6 +35,8 @@ drawFood();
 setInterval(gameLoop, 100);
 
 function gameLoop(timestamp) {
+	clearCanvas();
+	drawFood();
 	moveSnake();
 }
 
@@ -85,24 +84,25 @@ function drawWalls() {
 function drawSnake() {
 	ctx.fillStyle = "rgb(0, 192, 0)"
 
+	// Working one-cell version
 	ctx.fillRect(snake.xPosHead, snake.yPosHead, cellWidth, cellHeight);
-	/*
-	if (snake.direction === "up" || snake.direction === "down") {
-		ctx.fillRect(snake.xPosHead, snake.yPosHead, cellWidth, cellHeight * snake.snakeLength);
-	} else if (snake.direction === "left" || snake.direction === "right") {
-		ctx.fillRect(snake.xPosHead, snake.yPosHead, cellWidth * snake.snakeLength, cellHeight);
 
+
+
+
+	if (snake.direction === "up" ) {
+		ctx.fillRect(snake.xPosHead, snake.yPosHead, cellWidth, cellHeight);
+	} else if (snake.direction === "right") {
+		ctx.fillRect(snake.xPosHead, snake.yPosHead, cellWidth, cellHeight);
+	} else if (snake.direction === "down") {
+		ctx.fillRect(snake.xPosHead, snake.yPosHead, cellWidth, cellHeight);
+	} else if (snake.direction === "left") {
+		ctx.fillRect(snake.xPosHead, snake.yPosHead, cellWidth, cellHeight);
 	}
-	*/
 	
 }
 
-function changeSnakeDirection() {
-
-}
-
 function moveSnake() {
-	clearCanvas();
 	if (snake.direction === "up") {
 		snake.yPosHead -= cellHeight;
 		console.log("up");
@@ -116,6 +116,11 @@ function moveSnake() {
 		snake.xPosHead -= cellWidth;
 		console.log("left");
 	}
+
+	if (snake.xPosHead === food.xPos && snake.yPosHead === food.yPos) {
+		eatFood();
+	}
+
 	drawSnake();
 }
 
@@ -124,20 +129,14 @@ function moveSnake() {
 function drawFood() {
 	ctx.fillStyle = "rgb(255, 0, 0)"
 
-	if (food.firstDraw) {
-		ctx.fillRect(food.xPosDefault, food.yPosDefault, cellWidth, cellHeight);
-		food.firstDraw = false;
-	} else {
-		ctx.fillRect(food.xPos, food.yPos, cellWidth, cellHeight);
-	}
+	ctx.fillRect(food.xPos, food.yPos, cellWidth, cellHeight);
 }
 
 function eatFood() {
-	clearCanvas();
 
-	//grow snake
+	food.xPos = getRandom();
+	food.yPos = getRandom();
 
-	drawSnake();
 	drawFood();
 }
 
