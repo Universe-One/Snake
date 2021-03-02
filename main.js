@@ -41,28 +41,28 @@ window.addEventListener("keydown", function(e) {
 	switch (event.code) {
 		case "KeyW":
 		case "ArrowUp":
-			if (snake.direction !== "up") {
+			if (snake.direction !== "up" && snake.direction !== "down") {
 				snake.direction = "up";
 				moveSnake();
 			}
 			break;
 		case "KeyD":
 		case "ArrowRight":
-			if (snake.direction !== "right") {
+			if (snake.direction !== "right" && snake.direction !== "left") {
 				snake.direction = "right";
 				moveSnake();
 			}
 			break;
 		case "KeyS":
 		case "ArrowDown":
-			if (snake.direction !== "down") {
+			if (snake.direction !== "down" && snake.direction !== "up") {
 				snake.direction = "down";
 				moveSnake();
 			}
 			break;
 		case "KeyA":
 		case "ArrowLeft":
-			if (snake.direction !== "left") {
+			if (snake.direction !== "left" && snake.direction !== "right") {
 				snake.direction = "left";
 				moveSnake();
 			}
@@ -92,10 +92,12 @@ function moveSnake() {
 	if (snake.direction === "up") {
 		console.log("up");
 	} else if (snake.direction === "right") {
+		//snake.xPosHead += cellWidth;
 		console.log("right");
 	} else if (snake.direction === "down") {
 		console.log("down");
 	} else if (snake.direction === "left") {
+		//snake.xPosHead -= cellWidth;
 		console.log("left");
 	}
 }
@@ -120,6 +122,11 @@ function eatFood() {
 
 	drawSnake();
 	drawFood();
+}
+
+
+function gameOver() {
+	console.log("Game Over!");
 }
 
 // Clears the whole 18 cell by 18 cell play area, leaving the walls in tact.
