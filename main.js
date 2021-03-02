@@ -10,25 +10,35 @@ const numCellsInRow = 20;
 const numCellsInColumn = 20;
 const cellWidth = canvas.width / numCellsInRow;
 const cellHeight = canvas.height / numCellsInColumn;
-const initPos = 60;
-let snakeLength = 4;
+//const initPos = 60;
+//let snakeLength = 4;
 
-const food = {
-	firstDraw: true,
-	xPosDefault: width - cellWidth - initPos,
-	yPosDefault: height / 2,
-	xPos: getRandom(),
-	yPos: getRandom()
+function Snake() {
+	this.snakeLength = 4;
+	this.xPosTail = 60;
+	this.yPosTail = height / 2;
+	this.xPosHead = this.xPosTail + (this.snakeLength * cellWidth);
+	this.yPosHead = height / 2;
+}
+
+
+function Food() {
+	this.firstDraw = true;
+	this.xPosDefault = 320;
+	this.yPosDefault = height / 2;
+	this.xPos = getRandom();
+	this.yPos = getRandom();
 }
 
 
 
 // Run the program
+let snake = new Snake();
+let food = new Food();
 drawWalls();
 drawSnake();
 drawFood();
 drawFood();
-
 
 
 function drawWalls() {
@@ -43,8 +53,8 @@ function drawWalls() {
 
 function drawSnake() {
 	ctx.fillStyle = "rgb(0, 192, 0)"
-	for (let i = initPos; i < initPos + (cellWidth * snakeLength); i += cellWidth) {
-		ctx.fillRect(i, height / 2, cellWidth, cellHeight);
+	for (let i = snake.xPosTail; i < snake.xPosHead; i += cellWidth) {
+		ctx.fillRect(i, snake.yPosTail, cellWidth, cellHeight);
 	}
 }
 
