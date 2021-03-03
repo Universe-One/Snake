@@ -55,43 +55,64 @@ function gameLoop(timestamp) {
 
 // Control snake with key inputs
 window.addEventListener("keydown", function(e) {
-	switch (event.code) {
-		case "KeyW":
-		case "ArrowUp":
-			if (snake.directionQueue.length < 2) {
-				if (snake.direction !== "up" && snake.direction !== "down") {
+	// Length of directionQueue is limited to 2 so that the game does not remember too many
+	// spammed inputs which may be accidental, but also retains the feeling of responsiveness.
+	// As long as directionQueue's length is less than 2, another direction can be added to it.
+	if (snake.directionQueue.length < 2) {
+		switch (event.code) {
+			case "KeyW":
+			case "ArrowUp":
+				// When a directional button is pressed and there is nothing in the queue,
+				// add the appropriate direction to the queue if the snake is not currently 
+				// moving in or opposite that direction.
+				if (snake.direction !== "up" && snake.direction !== "down" &&
+				snake.directionQueue.length === 0) {
 					snake.directionQueue.push("up");
-					console.log(snake.directionQueue);
 				}
-			}
-			break;
-		case "KeyD":
-		case "ArrowRight":
-			if (snake.directionQueue.length < 2) {
-				if (snake.direction !== "right" && snake.direction !== "left") {
+				// When a directional button is pressed and there is something in the queue,
+				// add the appropriate direction to the queue as its second direction element
+				// if this is different from the queue's first direction element.
+				// A queue should not be allowed to look like ["up", "up"], and this is what
+				// prevents that.
+				if (snake.directionQueue[0] !== "up" && snake.directionQueue[0] !== "down" &&
+				snake.directionQueue.length > 0) {
+					snake.directionQueue.push("up");
+				}
+				break;
+			case "KeyD":
+			case "ArrowRight":
+				if (snake.direction !== "right" && snake.direction !== "left" &&
+				snake.directionQueue.length === 0) {
 					snake.directionQueue.push("right");
-					console.log(snake.directionQueue);
 				}
-			}
-			break;
-		case "KeyS":
-		case "ArrowDown":
-			if (snake.directionQueue.length < 2) {
-				if (snake.direction !== "down" && snake.direction !== "up") {
+				if (snake.directionQueue[0] !== "right" && snake.directionQueue[0] !== "left" &&
+				snake.directionQueue.length > 0) {
+					snake.directionQueue.push("right");
+				}
+				break;
+			case "KeyS":
+			case "ArrowDown":
+				if (snake.direction !== "down" && snake.direction !== "up" &&
+				snake.directionQueue.length === 0) {
 					snake.directionQueue.push("down");
-					console.log(snake.directionQueue);
 				}
-			}
-			break;
-		case "KeyA":
-		case "ArrowLeft":
-			if (snake.directionQueue.length < 2) {
-				if (snake.direction !== "left" && snake.direction !== "right") {
+				if (snake.directionQueue[0] !== "down" && snake.directionQueue[0] !== "up" &&
+				snake.directionQueue.length > 0) {
+					snake.directionQueue.push("down");
+				}
+				break;
+			case "KeyA":
+			case "ArrowLeft":
+				if (snake.direction !== "left" && snake.direction !== "right" &&
+				snake.directionQueue.length === 0) {
 					snake.directionQueue.push("left");
-					console.log(snake.directionQueue);
 				}
-			}
-			break;
+				if (snake.directionQueue[0] !== "left" && snake.directionQueue[0] !== "right" &&
+				snake.directionQueue.length > 0) {
+					snake.directionQueue.push("left");
+				}
+				break;
+		}
 	}
 });
 
