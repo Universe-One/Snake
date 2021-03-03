@@ -43,7 +43,7 @@ const game = new Game();
 const snake = new Snake();
 const food = new Food();
 drawWalls();
-drawSnake();
+//drawSnake();
 drawFood();
 
 const intervalId = setInterval(gameLoop, 100);
@@ -153,6 +153,10 @@ function moveSnake() {
 	drawSnake();
 }
 
+function growSnake() {
+	console.log("grow");
+}
+
 function detectCollision() {
 	// Detect collision with walls
 	if (snake.xPosHead < cellWidth ||
@@ -171,17 +175,18 @@ function drawFood() {
 	ctx.fillRect(food.xPos, food.yPos, cellWidth, cellHeight);
 }
 
+// Increment score, generate random coordinates for new piece of food and draw it.
 function eatFood() {
 	game.score += 5;
 	score.textContent = `Score: ${game.score}`;
-	console.log(game.score);
+
+	growSnake();
 
 	food.xPos = getRandom();
 	food.yPos = getRandom();
 
 	drawFood();
 }
-
 
 function gameOver() {
 	game.isOver = true;
