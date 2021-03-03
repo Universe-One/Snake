@@ -4,9 +4,22 @@
 }
 
 #canvas-container {
-	width: 100vw;
-	height: 100vh;
-	position: relative;
+	background-color: #DDDDDD;
+	width: 480px;
+	height: 480px;
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	margin: auto;
+}
+
+#score {
+	font-family: monospace;
+	font-size: 1.5em;
+	padding-top: 0.5em;
+	padding-left: 2em;
 }
 
 #game-canvas {

@@ -1,5 +1,7 @@
 //TODO
 // Make it so direction can only be changed once per cycle
+//
+// Make it so food cannot spawn on top of snake
 
 
 
@@ -8,6 +10,7 @@
 
 const canvas = document.querySelector("#game-canvas");
 const ctx = canvas.getContext("2d");
+const score = document.querySelector("#score");
 
 const width = canvas.width;
 const height = canvas.height;
@@ -17,9 +20,9 @@ const cellWidth = canvas.width / numCellsInRow;
 const cellHeight = canvas.height / numCellsInColumn;
 
 function Game() {
-	isOver: false
+	this.isOver = false;
+	this.score = 0;
 }
-
 
 function Snake() {
 	this.snakeLength = 4;
@@ -169,6 +172,9 @@ function drawFood() {
 }
 
 function eatFood() {
+	game.score += 5;
+	score.textContent = `Score: ${game.score}`;
+	console.log(game.score);
 
 	food.xPos = getRandom();
 	food.yPos = getRandom();
