@@ -3,8 +3,6 @@
 //
 // Make it so food cannot spawn on top of snake
 
-
-
 // Many of the calculations in this program are done using cellWidth and numCellsInRow, but can just as easy
 // be done using cellHeight and numCellsInColumn since they are symmetric.
 
@@ -30,7 +28,8 @@ function Snake() {
 	this.yPosTail = height / 2;
 	this.xPosHead = this.xPosTail + (this.snakeLength * cellWidth);
 	this.yPosHead = height / 2;
-	this.direction = "right"
+	this.direction = "right";
+	this.directionQueue = [];
 }
 
 function Food() {
@@ -43,10 +42,10 @@ const game = new Game();
 const snake = new Snake();
 const food = new Food();
 drawWalls();
-//drawSnake();
+drawSnake();
 drawFood();
 
-const intervalId = setInterval(gameLoop, 100);
+const intervalId = setInterval(gameLoop, 1000);
 
 function gameLoop(timestamp) {
 	clearCanvas();
@@ -59,26 +58,38 @@ window.addEventListener("keydown", function(e) {
 	switch (event.code) {
 		case "KeyW":
 		case "ArrowUp":
-			if (snake.direction !== "up" && snake.direction !== "down") {
-				snake.direction = "up";
+			if (snake.directionQueue.length < 2) {
+				if (snake.direction !== "up" && snake.direction !== "down") {
+					snake.directionQueue.push("up");
+					console.log(snake.directionQueue);
+				}
 			}
 			break;
 		case "KeyD":
 		case "ArrowRight":
-			if (snake.direction !== "right" && snake.direction !== "left") {
-				snake.direction = "right";
+			if (snake.directionQueue.length < 2) {
+				if (snake.direction !== "right" && snake.direction !== "left") {
+					snake.directionQueue.push("right");
+					console.log(snake.directionQueue);
+				}
 			}
 			break;
 		case "KeyS":
 		case "ArrowDown":
-			if (snake.direction !== "down" && snake.direction !== "up") {
-				snake.direction = "down";
+			if (snake.directionQueue.length < 2) {
+				if (snake.direction !== "down" && snake.direction !== "up") {
+					snake.directionQueue.push("down");
+					console.log(snake.directionQueue);
+				}
 			}
 			break;
 		case "KeyA":
 		case "ArrowLeft":
-			if (snake.direction !== "left" && snake.direction !== "right") {
-				snake.direction = "left";
+			if (snake.directionQueue.length < 2) {
+				if (snake.direction !== "left" && snake.direction !== "right") {
+					snake.directionQueue.push("left");
+					console.log(snake.directionQueue);
+				}
 			}
 			break;
 	}
@@ -116,6 +127,10 @@ function drawSnake() {
 }
 
 function moveSnake() {
+	if (snake.directionQueue.length !== 0) {
+		snake.direction = snake.directionQueue[0];
+		snake.directionQueue.shift();
+	}
 
 	if (snake.direction === "up") {
 		snake.yPosHead -= cellHeight;
