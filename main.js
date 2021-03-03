@@ -1,3 +1,8 @@
+//TODO
+// Make it so direction can only be changed once per cycle
+
+
+
 // Many of the calculations in this program are done using cellWidth and numCellsInRow, but can just as easy
 // be done using cellHeight and numCellsInColumn since they are symmetric.
 
@@ -10,6 +15,11 @@ const numCellsInRow = 20;
 const numCellsInColumn = 20;
 const cellWidth = canvas.width / numCellsInRow;
 const cellHeight = canvas.height / numCellsInColumn;
+
+function Game() {
+	isOver: false
+}
+
 
 function Snake() {
 	this.snakeLength = 4;
@@ -26,13 +36,14 @@ function Food() {
 }
 
 // Run the program
-let snake = new Snake();
-let food = new Food();
+const game = new Game();
+const snake = new Snake();
+const food = new Food();
 drawWalls();
 drawSnake();
 drawFood();
 
-setInterval(gameLoop, 100);
+const intervalId = setInterval(gameLoop, 100);
 
 function gameLoop(timestamp) {
 	clearCanvas();
@@ -80,7 +91,6 @@ function drawWalls() {
 	}
 }
 
-// BUG HERE
 function drawSnake() {
 	ctx.fillStyle = "rgb(0, 192, 0)"
 
@@ -89,7 +99,7 @@ function drawSnake() {
 
 
 
-
+/*
 	if (snake.direction === "up" ) {
 		ctx.fillRect(snake.xPosHead, snake.yPosHead, cellWidth, cellHeight);
 	} else if (snake.direction === "right") {
@@ -99,29 +109,55 @@ function drawSnake() {
 	} else if (snake.direction === "left") {
 		ctx.fillRect(snake.xPosHead, snake.yPosHead, cellWidth, cellHeight);
 	}
-	
+*/
 }
 
 function moveSnake() {
+
 	if (snake.direction === "up") {
 		snake.yPosHead -= cellHeight;
-		console.log("up");
 	} else if (snake.direction === "right") {
 		snake.xPosHead += cellWidth;
-		console.log("right");
 	} else if (snake.direction === "down") {
 		snake.yPosHead += cellHeight;
-		console.log("down");
 	} else if (snake.direction === "left") {
 		snake.xPosHead -= cellWidth;
-		console.log("left");
 	}
 
 	if (snake.xPosHead === food.xPos && snake.yPosHead === food.yPos) {
 		eatFood();
 	}
 
+	detectCollision();
+
+	// If snake's head moves into a cell occupied by the wall, triggering the end of the
+	// game, move the head back one cell so the head doesn't physically render over/under
+	// the wall. Even if the wall is rendered over the snake's head, neglecting this step
+	// causes the snake to appear one unit shorter when it collides with a wall
+	// since the snake's head will be drawn under the wall, which should not be possible.
+	if (game.isOver) {
+		if (snake.direction === "up") {
+			snake.yPosHead += cellHeight;
+		} else if (snake.direction === "right") {
+			snake.xPosHead -= cellWidth;
+		} else if (snake.direction === "down") {
+			snake.yPosHead -= cellHeight;
+		} else if (snake.direction === "left") {
+			snake.xPosHead += cellWidth;
+		}
+	}
+
 	drawSnake();
+}
+
+function detectCollision() {
+	// Detect collision with walls
+	if (snake.xPosHead < cellWidth ||
+	snake.xPosHead >= width - cellWidth ||
+	snake.yPosHead < cellHeight ||
+	snake.yPosHead >= height - cellHeight) {
+		gameOver();
+	}
 }
 
 // If this is the first time drawing food, draw it at the specified default location. 
@@ -142,6 +178,8 @@ function eatFood() {
 
 
 function gameOver() {
+	game.isOver = true;
+	clearInterval(intervalId);
 	console.log("Game Over!");
 }
 
