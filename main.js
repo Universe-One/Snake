@@ -1,14 +1,16 @@
 //TODO
-// Make it so direction can only be changed once per cycle
-//
 // Make it so food cannot spawn on top of snake
+
+
+
 
 // Many of the calculations in this program are done using cellWidth and numCellsInRow, but can just as easy
 // be done using cellHeight and numCellsInColumn since they are symmetric.
 
 const canvas = document.querySelector("#game-canvas");
 const ctx = canvas.getContext("2d");
-const score = document.querySelector("#score");
+const score = document.querySelector("#current-score");
+const highScore = document.querySelector("#high-score");
 
 const width = canvas.width;
 const height = canvas.height;
@@ -17,9 +19,44 @@ const numCellsInColumn = 20;
 const cellWidth = canvas.width / numCellsInRow;
 const cellHeight = canvas.height / numCellsInColumn;
 
+let intervalId = setInterval(gameLoop, 200);
+
 function Game() {
 	this.isOver = false;
 	this.score = 0;
+	this.highScore = 0;
+}
+
+Game.prototype.gameOver = function() {
+	game.isOver = true;
+	clearInterval(intervalId);
+	console.log("Game Over!");
+	window.addEventListener("keydown", game.resetListener);
+}
+
+Game.prototype.resetListener = function(e) {
+	if (e.code === "Space") {
+		game.reset();
+	}
+}
+
+Game.prototype.reset = function() {
+	console.log("reset");
+	window.removeEventListener("keydown", game.resetListener);
+	game.isOver = false;
+	game.score = 0;
+	score.textContent = `Score: ${game.score}`;
+	snake.snakeLength = 4;
+	snake.xPosTail = 60;
+	snake.yPosTail = height / 2;
+	snake.xPosHead = snake.xPosTail + (snake.snakeLength * cellWidth);
+	snake.yPosHead = height / 2;
+	snake.direction = "right";
+	snake.directionQueue = [];
+	food.xPos = 320;
+	food.yPos = height / 2;
+
+	intervalId = setInterval(gameLoop, 200);
 }
 
 function Snake() {
@@ -45,21 +82,19 @@ drawWalls();
 drawSnake();
 drawFood();
 
-const intervalId = setInterval(gameLoop, 1000);
-
 function gameLoop(timestamp) {
 	clearCanvas();
 	drawFood();
 	moveSnake();
 }
 
-// Control snake with key inputs
+// Keyboard controls
 window.addEventListener("keydown", function(e) {
 	// Length of directionQueue is limited to 2 so that the game does not remember too many
 	// spammed inputs which may be accidental, but also retains the feeling of responsiveness.
 	// As long as directionQueue's length is less than 2, another direction can be added to it.
 	if (snake.directionQueue.length < 2) {
-		switch (event.code) {
+		switch (e.code) {
 			case "KeyW":
 			case "ArrowUp":
 				// When a directional button is pressed and there is nothing in the queue,
@@ -199,7 +234,7 @@ function detectCollision() {
 	snake.xPosHead >= width - cellWidth ||
 	snake.yPosHead < cellHeight ||
 	snake.yPosHead >= height - cellHeight) {
-		gameOver();
+		game.gameOver();
 	}
 }
 
@@ -214,7 +249,13 @@ function drawFood() {
 // Increment score, generate random coordinates for new piece of food and draw it.
 function eatFood() {
 	game.score += 5;
+
+	if (game.highScore <= game.score) {
+		game.highScore = game.score;
+	}
+
 	score.textContent = `Score: ${game.score}`;
+	highScore.textContent = `High Score: ${game.highScore}`;
 
 	growSnake();
 
@@ -222,12 +263,6 @@ function eatFood() {
 	food.yPos = getRandom();
 
 	drawFood();
-}
-
-function gameOver() {
-	game.isOver = true;
-	clearInterval(intervalId);
-	console.log("Game Over!");
 }
 
 // Clears the whole 18 cell by 18 cell play area, leaving the walls in tact.
