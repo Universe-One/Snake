@@ -27,24 +27,33 @@ function Game() {
 	this.highScore = 0;
 }
 
+Game.prototype.retrieveHighScore = function() {
+	localStorage.getItem("highScore") !== null ? 
+	this.highScore = localStorage.getItem("highScore") :
+	this.highScore = 0;
+	
+	highScore.textContent = `High Score: ${game.highScore}`;
+};
+
 Game.prototype.gameOver = function() {
-	game.isOver = true;
+	this.isOver = true;
 	clearInterval(intervalId);
 	console.log("Game Over!");
 	window.addEventListener("keydown", game.resetListener);
-}
+};
 
 Game.prototype.resetListener = function(e) {
 	if (e.code === "Space") {
 		game.reset();
 	}
-}
+};
 
 Game.prototype.reset = function() {
-	console.log("reset");
 	window.removeEventListener("keydown", game.resetListener);
-	game.isOver = false;
-	game.score = 0;
+
+	// Reset variables back to initial values
+	this.isOver = false;
+	this.score = 0;
 	score.textContent = `Score: ${game.score}`;
 	snake.snakeLength = 4;
 	snake.xPosTail = 60;
@@ -56,8 +65,9 @@ Game.prototype.reset = function() {
 	food.xPos = 320;
 	food.yPos = height / 2;
 
+	// Start a new game loop
 	intervalId = setInterval(gameLoop, 200);
-}
+};
 
 function Snake() {
 	this.snakeLength = 4;
@@ -78,9 +88,11 @@ function Food() {
 const game = new Game();
 const snake = new Snake();
 const food = new Food();
+game.retrieveHighScore();
 drawWalls();
 drawSnake();
 drawFood();
+
 
 function gameLoop(timestamp) {
 	clearCanvas();
@@ -252,7 +264,10 @@ function eatFood() {
 
 	if (game.highScore <= game.score) {
 		game.highScore = game.score;
+
+		localStorage.setItem("highScore", game.highScore);
 	}
+
 
 	score.textContent = `Score: ${game.score}`;
 	highScore.textContent = `High Score: ${game.highScore}`;
