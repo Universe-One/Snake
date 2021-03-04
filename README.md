@@ -5,10 +5,10 @@
 [Live Demo](https://universe-one.github.io/Snake/)
 
 # Controls
-W or &#8593; - Move Up
-A or &#8592; - Move Left
-S or &#8595; - Move Down
-D or &#8594; - Move Right
+W or &#8593; - Move Up  
+A or &#8592; - Move Left  
+S or &#8595; - Move Down  
+D or &#8594; - Move Right  
 Space (When game is over) - Restart Game
 
 # Technologies Used
