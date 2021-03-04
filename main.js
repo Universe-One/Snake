@@ -1,6 +1,6 @@
 //TODO
 // Make it so food cannot spawn on top of snake
-
+// Make it so pressing space INSTANTLY restarts game (right now there is a delay)
 
 
 
@@ -19,12 +19,11 @@ const numCellsInColumn = 20;
 const cellWidth = canvas.width / numCellsInRow;
 const cellHeight = canvas.height / numCellsInColumn;
 
-let intervalId = setInterval(gameLoop, 200);
-
 function Game() {
 	this.isOver = false;
 	this.score = 0;
 	this.highScore = 0;
+	this.gameSpeed = 1000;
 }
 
 Game.prototype.retrieveHighScore = function() {
@@ -60,31 +59,28 @@ Game.prototype.reset = function() {
 				   {xPos: 100, yPos: 200}, 
 				   {xPos: 80, yPos: 200}, 
 				   {xPos: 60, yPos: 200}];
-	/*snake.xPosTail = 60;
-	snake.yPosTail = height / 2;
-	snake.xPosHead = snake.xPosTail + (snake.snakeLength * cellWidth);
-	snake.yPosHead = height / 2;*/
 	snake.direction = "right";
 	snake.directionQueue = [];
 	food.xPos = 320;
 	food.yPos = height / 2;
 
 	// Start a new game loop
-	intervalId = setInterval(gameLoop, 200);
+	intervalId = setInterval(gameLoop, game.gameSpeed);
 };
 
 function Snake() {
 	this.snakeLength = 4;
+	// this.cells[0] is the snake's head and this.cells[this.cells.length - 1] is the snake's tail
 	this.cells = [{xPos: 120, yPos: 200}, 
 				   {xPos: 100, yPos: 200}, 
 				   {xPos: 80, yPos: 200}, 
 				   {xPos: 60, yPos: 200}];
-	/*this.xPosTail = 60;
-	this.yPosTail = height / 2;
-	this.xPosHead = this.xPosTail + (this.snakeLength * cellWidth);
-	this.yPosHead = height / 2;*/
 	this.direction = "right";
 	this.directionQueue = [];
+}
+
+Snake.prototype.a = function() {
+	console.log(this.cells[this.cells.length - 1]);
 }
 
 function Food() {
@@ -101,6 +97,7 @@ drawWalls();
 drawSnake();
 drawFood();
 
+let intervalId = setInterval(gameLoop, game.gameSpeed);
 
 function gameLoop(timestamp) {
 	clearCanvas();
@@ -171,6 +168,7 @@ window.addEventListener("keydown", function(e) {
 	}
 });
 
+// Create the border of the play area
 function drawWalls() {
 	ctx.fillStyle = "rgb(0, 0, 0)";
 	for(let i = 0; i < width; i += cellWidth) {
@@ -181,11 +179,13 @@ function drawWalls() {
 	}
 }
 
+// Take every cell in the snake object and draw it according to its x and y position
 function drawSnake() {
 	ctx.fillStyle = "rgb(0, 192, 0)"
-
-	// Working one-cell version
-	ctx.fillRect(snake.cells[0].xPos, snake.cells[0].yPos, cellWidth, cellHeight);
+	
+	snake.cells.forEach(function(element) {
+		ctx.fillRect(element.xPos, element.yPos, cellWidth, cellHeight);
+	})
 }
 
 function moveSnake() {
@@ -194,14 +194,20 @@ function moveSnake() {
 		snake.directionQueue.shift();
 	}
 
+	// Remove the last cell (the tail) from the cells array
+	let oldTail = snake.cells.pop();
+
+	// Attach a cell to the beginning of the cells array, giving the snake a new head.
+	// The removal of the snake's tail and attachment of a new head is what gives the appearance
+	// of movement.
 	if (snake.direction === "up") {
-		snake.cells[0].yPos -= cellHeight;
+		snake.cells.unshift({xPos: snake.cells[0].xPos, yPos: snake.cells[0].yPos - cellHeight});
 	} else if (snake.direction === "right") {
-		snake.cells[0].xPos += cellWidth;
+		snake.cells.unshift({xPos: snake.cells[0].xPos + cellWidth, yPos: snake.cells[0].yPos});
 	} else if (snake.direction === "down") {
-		snake.cells[0].yPos += cellHeight;
+		snake.cells.unshift({xPos: snake.cells[0].xPos, yPos: snake.cells[0].yPos + cellHeight});
 	} else if (snake.direction === "left") {
-		snake.cells[0].xPos -= cellWidth;
+		snake.cells.unshift({xPos: snake.cells[0].xPos - cellWidth, yPos: snake.cells[0].yPos});
 	}
 
 	if (snake.cells[0].xPos === food.xPos && snake.cells[0].yPos === food.yPos) {
@@ -210,21 +216,13 @@ function moveSnake() {
 
 	detectCollision();
 
-	// If snake's head moves into a cell occupied by the wall, triggering the end of the
-	// game, move the head back one cell so the head doesn't physically render over/under
-	// the wall. Even if the wall is rendered over the snake's head, neglecting this step
-	// causes the snake to appear one unit shorter when it collides with a wall
-	// since the snake's head will be drawn under the wall, which should not be possible.
+	// If the snake's head moves into a cell occupied by the wall, triggering the end of the
+	// game, reattach its most recently removed tail and remove its head. Neglecting this step
+	// will either make the snake's head render above the wall or below the wall with an
+	// apparently shorter body.
 	if (game.isOver) {
-		if (snake.direction === "up") {
-			snake.cells[0].yPos += cellHeight;
-		} else if (snake.direction === "right") {
-			snake.cells[0].xPos -= cellWidth;
-		} else if (snake.direction === "down") {
-			snake.cells[0].yPos -= cellHeight;
-		} else if (snake.direction === "left") {
-			snake.cells[0].xPos += cellWidth;
-		}
+		snake.cells.push(oldTail);
+		snake.cells.shift();
 	}
 
 	drawSnake();
