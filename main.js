@@ -56,10 +56,14 @@ Game.prototype.reset = function() {
 	this.score = 0;
 	score.textContent = `Score: ${game.score}`;
 	snake.snakeLength = 4;
-	snake.xPosTail = 60;
+	snake.cells = [{xPos: 120, yPos: 200}, 
+				   {xPos: 100, yPos: 200}, 
+				   {xPos: 80, yPos: 200}, 
+				   {xPos: 60, yPos: 200}];
+	/*snake.xPosTail = 60;
 	snake.yPosTail = height / 2;
 	snake.xPosHead = snake.xPosTail + (snake.snakeLength * cellWidth);
-	snake.yPosHead = height / 2;
+	snake.yPosHead = height / 2;*/
 	snake.direction = "right";
 	snake.directionQueue = [];
 	food.xPos = 320;
@@ -71,10 +75,14 @@ Game.prototype.reset = function() {
 
 function Snake() {
 	this.snakeLength = 4;
-	this.xPosTail = 60;
+	this.cells = [{xPos: 120, yPos: 200}, 
+				   {xPos: 100, yPos: 200}, 
+				   {xPos: 80, yPos: 200}, 
+				   {xPos: 60, yPos: 200}];
+	/*this.xPosTail = 60;
 	this.yPosTail = height / 2;
 	this.xPosHead = this.xPosTail + (this.snakeLength * cellWidth);
-	this.yPosHead = height / 2;
+	this.yPosHead = height / 2;*/
 	this.direction = "right";
 	this.directionQueue = [];
 }
@@ -177,21 +185,7 @@ function drawSnake() {
 	ctx.fillStyle = "rgb(0, 192, 0)"
 
 	// Working one-cell version
-	ctx.fillRect(snake.xPosHead, snake.yPosHead, cellWidth, cellHeight);
-
-
-
-/*
-	if (snake.direction === "up" ) {
-		ctx.fillRect(snake.xPosHead, snake.yPosHead, cellWidth, cellHeight);
-	} else if (snake.direction === "right") {
-		ctx.fillRect(snake.xPosHead, snake.yPosHead, cellWidth, cellHeight);
-	} else if (snake.direction === "down") {
-		ctx.fillRect(snake.xPosHead, snake.yPosHead, cellWidth, cellHeight);
-	} else if (snake.direction === "left") {
-		ctx.fillRect(snake.xPosHead, snake.yPosHead, cellWidth, cellHeight);
-	}
-*/
+	ctx.fillRect(snake.cells[0].xPos, snake.cells[0].yPos, cellWidth, cellHeight);
 }
 
 function moveSnake() {
@@ -201,16 +195,16 @@ function moveSnake() {
 	}
 
 	if (snake.direction === "up") {
-		snake.yPosHead -= cellHeight;
+		snake.cells[0].yPos -= cellHeight;
 	} else if (snake.direction === "right") {
-		snake.xPosHead += cellWidth;
+		snake.cells[0].xPos += cellWidth;
 	} else if (snake.direction === "down") {
-		snake.yPosHead += cellHeight;
+		snake.cells[0].yPos += cellHeight;
 	} else if (snake.direction === "left") {
-		snake.xPosHead -= cellWidth;
+		snake.cells[0].xPos -= cellWidth;
 	}
 
-	if (snake.xPosHead === food.xPos && snake.yPosHead === food.yPos) {
+	if (snake.cells[0].xPos === food.xPos && snake.cells[0].yPos === food.yPos) {
 		eatFood();
 	}
 
@@ -223,13 +217,13 @@ function moveSnake() {
 	// since the snake's head will be drawn under the wall, which should not be possible.
 	if (game.isOver) {
 		if (snake.direction === "up") {
-			snake.yPosHead += cellHeight;
+			snake.cells[0].yPos += cellHeight;
 		} else if (snake.direction === "right") {
-			snake.xPosHead -= cellWidth;
+			snake.cells[0].xPos -= cellWidth;
 		} else if (snake.direction === "down") {
-			snake.yPosHead -= cellHeight;
+			snake.cells[0].yPos -= cellHeight;
 		} else if (snake.direction === "left") {
-			snake.xPosHead += cellWidth;
+			snake.cells[0].xPos += cellWidth;
 		}
 	}
 
@@ -242,10 +236,10 @@ function growSnake() {
 
 function detectCollision() {
 	// Detect collision with walls
-	if (snake.xPosHead < cellWidth ||
-	snake.xPosHead >= width - cellWidth ||
-	snake.yPosHead < cellHeight ||
-	snake.yPosHead >= height - cellHeight) {
+	if (snake.cells[0].xPos < cellWidth ||
+	snake.cells[0].xPos >= width - cellWidth ||
+	snake.cells[0].yPos < cellHeight ||
+	snake.cells[0].yPos >= height - cellHeight) {
 		game.gameOver();
 	}
 }
