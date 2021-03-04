@@ -1,6 +1,6 @@
 //TODO
 // Make it so food cannot spawn on top of snake
-// Make it so pressing space INSTANTLY restarts game (right now there is a delay)
+
 
 
 
@@ -23,7 +23,7 @@ function Game() {
 	this.isOver = false;
 	this.score = 0;
 	this.highScore = 0;
-	this.gameSpeed = 1000;
+	this.gameSpeed = 100;
 }
 
 Game.prototype.retrieveHighScore = function() {
@@ -33,6 +33,12 @@ Game.prototype.retrieveHighScore = function() {
 	
 	highScore.textContent = `High Score: ${game.highScore}`;
 };
+
+Game.prototype.initBeforeEachGame = function() {
+	clearCanvas();
+	drawSnake();
+	drawFood();
+}
 
 Game.prototype.gameOver = function() {
 	this.isOver = true;
@@ -66,6 +72,7 @@ Game.prototype.reset = function() {
 
 	// Start a new game loop
 	intervalId = setInterval(gameLoop, game.gameSpeed);
+	game.initBeforeEachGame();
 };
 
 function Snake() {
@@ -88,14 +95,14 @@ function Food() {
 	this.yPos = height / 2;
 }
 
-// Run the program
 const game = new Game();
 const snake = new Snake();
 const food = new Food();
+
+// Run the program
 game.retrieveHighScore();
 drawWalls();
-drawSnake();
-drawFood();
+game.initBeforeEachGame();
 
 let intervalId = setInterval(gameLoop, game.gameSpeed);
 
