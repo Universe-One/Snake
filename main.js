@@ -60,13 +60,13 @@ Game.prototype.reset = function() {
 	this.isOver = false;
 	this.score = 0;
 	score.textContent = `Score: ${game.score}`;
-	snake.snakeLength = 4;
 	snake.cells = [{xPos: 120, yPos: 200}, 
 				   {xPos: 100, yPos: 200}, 
 				   {xPos: 80, yPos: 200}, 
 				   {xPos: 60, yPos: 200}];
 	snake.direction = "right";
 	snake.directionQueue = [];
+	snake.oldTail = null;
 	food.xPos = 320;
 	food.yPos = height / 2;
 
@@ -76,7 +76,6 @@ Game.prototype.reset = function() {
 };
 
 function Snake() {
-	this.snakeLength = 4;
 	// this.cells[0] is the snake's head and this.cells[this.cells.length - 1] is the snake's tail
 	this.cells = [{xPos: 120, yPos: 200}, 
 				   {xPos: 100, yPos: 200}, 
@@ -84,10 +83,7 @@ function Snake() {
 				   {xPos: 60, yPos: 200}];
 	this.direction = "right";
 	this.directionQueue = [];
-}
-
-Snake.prototype.a = function() {
-	console.log(this.cells[this.cells.length - 1]);
+	this.oldTail = null;
 }
 
 function Food() {
@@ -202,7 +198,7 @@ function moveSnake() {
 	}
 
 	// Remove the last cell (the tail) from the cells array
-	let oldTail = snake.cells.pop();
+	snake.oldTail = snake.cells.pop();
 
 	// Attach a cell to the beginning of the cells array, giving the snake a new head.
 	// The removal of the snake's tail and attachment of a new head is what gives the appearance
@@ -228,15 +224,17 @@ function moveSnake() {
 	// will either make the snake's head render above the wall or below the wall with an
 	// apparently shorter body.
 	if (game.isOver) {
-		snake.cells.push(oldTail);
+		snake.cells.push(snake.oldTail);
 		snake.cells.shift();
 	}
 
 	drawSnake();
 }
 
+// When growSnake() is called from eatFood(), it reattaches the tail that was just removed
+// this moveSnake() step. This grows the snake by one unit rather than just moving it.
 function growSnake() {
-	console.log("grow");
+	snake.cells.push(snake.oldTail);
 }
 
 function detectCollision() {
@@ -257,7 +255,8 @@ function drawFood() {
 	ctx.fillRect(food.xPos, food.yPos, cellWidth, cellHeight);
 }
 
-// Increment score, generate random coordinates for new piece of food and draw it.
+// Increment score, update high score if needed, grow the snake, generate random coordinates 
+// for new piece of food and draw it.
 function eatFood() {
 	game.score += 5;
 
@@ -266,7 +265,6 @@ function eatFood() {
 
 		localStorage.setItem("highScore", game.highScore);
 	}
-
 
 	score.textContent = `Score: ${game.score}`;
 	highScore.textContent = `High Score: ${game.highScore}`;
