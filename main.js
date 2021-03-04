@@ -245,6 +245,16 @@ function detectCollision() {
 	snake.cells[0].yPos >= height - cellHeight) {
 		game.gameOver();
 	}
+
+	// Detect collision with self
+	for (let i = 1; i < snake.cells.length; i++) {
+		if (snake.cells[0].xPos === snake.cells[i].xPos &&
+		snake.cells[0].yPos === snake.cells[i].yPos) {
+			console.log(snake.cells);
+			console.log(snake.cells[i]);
+			game.gameOver();
+		}
+	}
 }
 
 // If this is the first time drawing food, draw it at the specified default location. 
@@ -277,11 +287,12 @@ function eatFood() {
 	drawFood();
 }
 
-// Clears the whole 18 cell by 18 cell play area, leaving the walls in tact.
+// Clears the whole 18x18 cell play area, leaving the walls in tact.
 function clearCanvas() {
 	ctx.clearRect(cellWidth, cellHeight, width - (cellWidth * 2), height - (cellHeight * 2));
 }
 
+// Gets a random cell from the 18x18 cell play area. The play area does not include cells occupied by walls.
 function getRandom() {
 	// (cellWidth - 2) is 18 and is used because two of the cells in the 20 cell row belong to the walls.
 	// The play area is an 18 cell by 18 cell grid. The walls do not count as part of the play area.
