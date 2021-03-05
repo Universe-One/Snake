@@ -53,7 +53,6 @@ Game.prototype.initOnceOnLoad = function() {
 	ctx.fillText("S", width / 2 - 40, 132.5);
 	ctx.fillText("D", width / 2 - 40, 157.5);
 
-	//ctx.save();
 	ctx.beginPath();
 	ctx.moveTo(100,100);
 	ctx.lineTo(100,150);
@@ -62,6 +61,7 @@ Game.prototype.initOnceOnLoad = function() {
 	ctx.fill();
 	
 	ctx.fillStyle = "red";
+	ctx.save();
 	ctx.translate(110, 125);
 	ctx.rotate(90 * Math.PI / 180);
 	ctx.translate(-110, -125);
@@ -71,6 +71,7 @@ Game.prototype.initOnceOnLoad = function() {
 	ctx.lineTo(120,150);
 	ctx.lineTo(120,100);
 	ctx.fill();
+	ctx.restore();
 };
 
 Game.prototype.initBeforeEachGame = function() {
