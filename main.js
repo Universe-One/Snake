@@ -1,5 +1,6 @@
 //TODO
 
+// Implement start screen
 // Implement ES6 Modules
 // Refactor/tidy up code (get rid of global variables)
 // Clean up commenting
@@ -25,6 +26,7 @@ function Game() {
 	this.score = 0;
 	this.highScore = 0;
 	this.gameSpeed = 100;
+	this.intervalId = null;
 }
 
 Game.prototype.retrieveHighScore = function() {
@@ -41,6 +43,10 @@ Game.prototype.initBeforeEachGame = function() {
 	drawFood();
 };
 
+Game.prototype.startGame = function() {
+	game.intervalId = setInterval(gameLoop, game.gameSpeed);
+}
+
 Game.prototype.gameOver = function() {
 	this.isOver = true;
 
@@ -54,7 +60,7 @@ Game.prototype.gameOver = function() {
 	// Draw the snake one final time in the state it was in when game over triggered.
 	drawSnake();
 
-	clearInterval(intervalId);
+	clearInterval(game.intervalId);
 	console.log("Game Over!");
 	window.addEventListener("keydown", game.resetListener);
 
@@ -95,7 +101,7 @@ Game.prototype.reset = function() {
 	food.yPos = height / 2;
 
 	// Start a new game loop
-	intervalId = setInterval(gameLoop, game.gameSpeed);
+	game.intervalId = setInterval(gameLoop, game.gameSpeed);
 	game.initBeforeEachGame();
 };
 
@@ -124,8 +130,6 @@ game.retrieveHighScore();
 drawWalls();
 game.initBeforeEachGame();
 
-let intervalId = setInterval(gameLoop, game.gameSpeed);
-
 function gameLoop(timestamp) {
 	clearCanvas();
 	drawFood();
@@ -137,10 +141,20 @@ window.addEventListener("keydown", function(e) {
 	// Length of directionQueue is limited to 2 so that the game does not remember too many
 	// spammed inputs which may be accidental, but also retains the feeling of responsiveness.
 	// As long as directionQueue's length is less than 2, another direction can be added to it.
+
 	if (snake.directionQueue.length < 2) {
 		switch (e.code) {
 			case "KeyW":
 			case "ArrowUp":
+				// When the game is loaded for the first time or is reset after a game over, 
+				// the intervalId will be null and the snake will be frozen in place.
+				// If the controls for up, right, or down are pressed, the game starts
+				// and the snake begins moving in the selected direction. If the control for
+				// left is pressed, nothing happens, as the snake begins by facing right,
+				// which makes it illegal for the snake to move left.
+				if (game.intervalId === null) {
+					game.startGame();
+				}
 				// When a directional button is pressed and there is nothing in the queue,
 				// add the appropriate direction to the queue if the snake is not currently 
 				// moving in or opposite that direction.
@@ -160,6 +174,9 @@ window.addEventListener("keydown", function(e) {
 				break;
 			case "KeyD":
 			case "ArrowRight":
+				if (game.intervalId === null) {
+					game.startGame();
+				}
 				if (snake.direction !== "right" && snake.direction !== "left" &&
 				snake.directionQueue.length === 0) {
 					snake.directionQueue.push("right");
@@ -171,6 +188,9 @@ window.addEventListener("keydown", function(e) {
 				break;
 			case "KeyS":
 			case "ArrowDown":
+				if (game.intervalId === null) {
+					game.startGame();
+				}
 				if (snake.direction !== "down" && snake.direction !== "up" &&
 				snake.directionQueue.length === 0) {
 					snake.directionQueue.push("down");
