@@ -37,6 +37,42 @@ Game.prototype.retrieveHighScore = function() {
 	highScore.textContent = `High Score: ${game.highScore}`;
 };
 
+Game.prototype.initOnceOnLoad = function() {
+	game.retrieveHighScore();
+	drawWalls();
+
+	// Show start screen FIX VALUES
+	ctx.fillStyle = "#CCCCCC";
+	ctx.fillRect(140, 60, 120, 120);
+	ctx.fillStyle = "#000000";
+	ctx.textAlign = "start";
+	ctx.textBaseline = "middle";
+	ctx.font = "2em monospace";
+	ctx.fillText("W", width / 2 - 40, 82.5);
+	ctx.fillText("A", width / 2 - 40, 107.5);
+	ctx.fillText("S", width / 2 - 40, 132.5);
+	ctx.fillText("D", width / 2 - 40, 157.5);
+
+	//ctx.save();
+	ctx.beginPath();
+	ctx.moveTo(100,100);
+	ctx.lineTo(100,150);
+	ctx.lineTo(120,150);
+	ctx.lineTo(120,100);
+	ctx.fill();
+	
+	ctx.fillStyle = "red";
+	ctx.translate(110, 125);
+	ctx.rotate(90 * Math.PI / 180);
+	ctx.translate(-110, -125);
+	ctx.beginPath();
+	ctx.moveTo(100,100);
+	ctx.lineTo(100,150);
+	ctx.lineTo(120,150);
+	ctx.lineTo(120,100);
+	ctx.fill();
+};
+
 Game.prototype.initBeforeEachGame = function() {
 	clearCanvas();
 	drawSnake();
@@ -64,7 +100,7 @@ Game.prototype.gameOver = function() {
 	console.log("Game Over!");
 	window.addEventListener("keydown", game.resetListener);
 
-	// Show game over message
+	// Show game over screen
 	ctx.fillStyle = "#CCCCCC";
 	ctx.fillRect(100, 140, 200, 120);
 	ctx.fillStyle = "#000000";
@@ -125,10 +161,10 @@ const game = new Game();
 const snake = new Snake();
 const food = new Food();
 
-// Run the program
-game.retrieveHighScore();
-drawWalls();
+// Initialization
 game.initBeforeEachGame();
+game.initOnceOnLoad();
+
 
 function gameLoop(timestamp) {
 	clearCanvas();
