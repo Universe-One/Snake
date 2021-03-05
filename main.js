@@ -1,6 +1,5 @@
 //TODO
-// fix snake rendering over gameover msg & "press key to start" screen
-// 		THIS IS FIXED NOW food also "HALF"-renders BEHIND game over message since the msg isn't perfectly on the grid
+
 // Implement ES6 Modules
 // Refactor/tidy up code (get rid of global variables)
 // Clean up commenting
@@ -44,6 +43,17 @@ Game.prototype.initBeforeEachGame = function() {
 
 Game.prototype.gameOver = function() {
 	this.isOver = true;
+
+	// If the snake's head moves into a cell occupied by the wall, triggering the end of the
+	// game, reattach its most recently removed tail and remove its head. Neglecting this step
+	// will either make the snake's head render above the wall or below the wall with an
+	// apparently shorter body.
+	snake.cells.push(snake.oldTail);
+	snake.cells.shift();
+
+	// Draw the snake one final time in the state it was in when game over triggered.
+	drawSnake();
+
 	clearInterval(intervalId);
 	console.log("Game Over!");
 	window.addEventListener("keydown", game.resetListener);
@@ -233,16 +243,15 @@ function moveSnake() {
 
 	detectCollision();
 
-	// If the snake's head moves into a cell occupied by the wall, triggering the end of the
-	// game, reattach its most recently removed tail and remove its head. Neglecting this step
-	// will either make the snake's head render above the wall or below the wall with an
-	// apparently shorter body.
-	if (game.isOver) {
-		snake.cells.push(snake.oldTail);
-		snake.cells.shift();
+	// Call drawSnake() here if the game is not over. This is the default behavior. 
+	// If the game is over, drawSnake() is instead called from game.gameOver() before 
+	// the game over screen is drawn. The snake needs to be drawn one final time in
+	// game.gameOver() to show the state of the snake when game over triggers. It needs 
+	// to be drawn before the game over screen so the snake never renders above the
+	// game over screen.
+	if (!game.isOver) {
+		drawSnake();
 	}
-
-	drawSnake();
 }
 
 // When growSnake() is called from eatFood(), it reattaches the tail that was just removed
