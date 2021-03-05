@@ -1,5 +1,9 @@
 //TODO
-
+// fix snake rendering over gameover msg & "press key to start" screen
+// 		THIS IS FIXED NOW food also "HALF"-renders BEHIND game over message since the msg isn't perfectly on the grid
+// Implement ES6 Modules
+// Refactor/tidy up code (get rid of global variables)
+// Clean up commenting
 
 
 // Many of the calculations in this program are done using cellWidth and numCellsInRow, but can just as easy
@@ -36,13 +40,25 @@ Game.prototype.initBeforeEachGame = function() {
 	clearCanvas();
 	drawSnake();
 	drawFood();
-}
+};
 
 Game.prototype.gameOver = function() {
 	this.isOver = true;
 	clearInterval(intervalId);
 	console.log("Game Over!");
 	window.addEventListener("keydown", game.resetListener);
+
+	// Show game over message
+	ctx.fillStyle = "#CCCCCC";
+	ctx.fillRect(100, 140, 200, 120);
+	ctx.fillStyle = "#000000";
+	ctx.textAlign = "center";
+	ctx.textBaseline = "middle";
+	ctx.font = "2em monospace";
+	ctx.fillText("Game Over!", width / 2, height / 2 - 20);
+	ctx.font = "1.2em monospace";
+	ctx.fillText("Press Space", width / 2, height / 2 + 10);
+	ctx.fillText("to Restart", width / 2, height / 2 + 28);
 };
 
 Game.prototype.resetListener = function(e) {
@@ -225,6 +241,7 @@ function moveSnake() {
 		snake.cells.push(snake.oldTail);
 		snake.cells.shift();
 	}
+
 	drawSnake();
 }
 
