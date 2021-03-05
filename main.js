@@ -1,6 +1,4 @@
 //TODO
-// Make it so food cannot spawn on top of snake
-
 
 
 
@@ -227,7 +225,6 @@ function moveSnake() {
 		snake.cells.push(snake.oldTail);
 		snake.cells.shift();
 	}
-
 	drawSnake();
 }
 
@@ -250,8 +247,6 @@ function detectCollision() {
 	for (let i = 1; i < snake.cells.length; i++) {
 		if (snake.cells[0].xPos === snake.cells[i].xPos &&
 		snake.cells[0].yPos === snake.cells[i].yPos) {
-			console.log(snake.cells);
-			console.log(snake.cells[i]);
 			game.gameOver();
 		}
 	}
@@ -281,9 +276,16 @@ function eatFood() {
 
 	growSnake();
 
-	food.xPos = getRandom();
-	food.yPos = getRandom();
-
+	// First, choose a random cell. If this cell is occupied by the snake,
+	// choose another random cell. Continue this process until a cell is
+	// chosen which is not occupied by the snake. Draw the piece of food there.
+	do {
+		food.xPos = getRandom();
+		food.yPos = getRandom();
+	} while (snake.cells.some(function(element) {
+		return element.xPos === food.xPos && element.yPos === food.yPos;
+	}));
+	
 	drawFood();
 }
 
@@ -296,5 +298,5 @@ function clearCanvas() {
 function getRandom() {
 	// (cellWidth - 2) is 18 and is used because two of the cells in the 20 cell row belong to the walls.
 	// The play area is an 18 cell by 18 cell grid. The walls do not count as part of the play area.
-	return Math.floor(Math.random() * (numCellsInRow - 2)) * cellWidth + cellWidth;		
+	return Math.floor(Math.random() * (numCellsInRow - 2)) * cellWidth + cellWidth;
 }
