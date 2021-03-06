@@ -41,37 +41,54 @@ Game.prototype.initOnceOnLoad = function() {
 	game.retrieveHighScore();
 	drawWalls();
 
-	// Show start screen FIX VALUES
+	// Show start screen
 	ctx.fillStyle = "#CCCCCC";
 	ctx.fillRect(140, 60, 120, 120);
 	ctx.fillStyle = "#000000";
-	ctx.textAlign = "start";
+	ctx.textAlign = "center";
 	ctx.textBaseline = "middle";
 	ctx.font = "2em monospace";
-	ctx.fillText("W", width / 2 - 40, 82.5);
-	ctx.fillText("A", width / 2 - 40, 107.5);
-	ctx.fillText("S", width / 2 - 40, 132.5);
-	ctx.fillText("D", width / 2 - 40, 157.5);
+	ctx.fillText("W", width / 2 - 30, 82.5);
+	ctx.fillText("A", width / 2 - 30, 107.5);
+	ctx.fillText("S", width / 2 - 30, 132.5);
+	ctx.fillText("D", width / 2 - 30, 157.5);
 
-	ctx.beginPath();
-	ctx.moveTo(100,100);
-	ctx.lineTo(100,150);
-	ctx.lineTo(120,150);
-	ctx.lineTo(120,100);
-	ctx.fill();
+	// Draw arrow icons to represent arrow keys. These are drawn to the right of the
+	// WASD key icons. The values chosen are intended to keep spacing symmetric.
+	// The subtraction of 1 at the end of each y value is a pixel offset to vertically
+	// align the arrow icons with their key icon counterparts.
 	
-	ctx.fillStyle = "red";
-	ctx.save();
-	ctx.translate(110, 125);
-	ctx.rotate(90 * Math.PI / 180);
-	ctx.translate(-110, -125);
+	// Up Arrow
 	ctx.beginPath();
-	ctx.moveTo(100,100);
-	ctx.lineTo(100,150);
-	ctx.lineTo(120,150);
-	ctx.lineTo(120,100);
+	ctx.moveTo((width / 2 + 30) - 1, (82.5 - 8) - 1);
+	ctx.lineTo((width / 2 + 30) - 1, (82.5 + 8) - 1);
+	ctx.lineTo((width / 2 + 30) + 1, (82.5 + 8) - 1);
+	ctx.lineTo((width / 2 + 30) + 1, (82.5 - 8) - 1);
 	ctx.fill();
-	ctx.restore();
+
+	// Right Arrow
+	ctx.beginPath();
+	ctx.moveTo((width / 2 + 30) - 8, (107.5 - 1) - 1);
+	ctx.lineTo((width / 2 + 30) - 8, (107.5 + 1) - 1);
+	ctx.lineTo((width / 2 + 30) + 8, (107.5 + 1) - 1);
+	ctx.lineTo((width / 2 + 30) + 8, (107.5 - 1) - 1);
+	ctx.fill();
+
+	// Down Arrow
+	ctx.beginPath();
+	ctx.moveTo((width / 2 + 30) - 1, (132.5 - 8) - 1);
+	ctx.lineTo((width / 2 + 30) - 1, (132.5 + 8) - 1);
+	ctx.lineTo((width / 2 + 30) + 1, (132.5 + 8) - 1);
+	ctx.lineTo((width / 2 + 30) + 1, (132.5 - 8) - 1);
+	ctx.fill();
+
+	// Left Arrow
+	ctx.beginPath();
+	ctx.moveTo((width / 2 + 30) - 8, (157.5 - 1) - 1);
+	ctx.lineTo((width / 2 + 30) - 8, (157.5 + 1) - 1);
+	ctx.lineTo((width / 2 + 30) + 8, (157.5 + 1) - 1);
+	ctx.lineTo((width / 2 + 30) + 8, (157.5 - 1) - 1);
+	ctx.fill();
 };
 
 Game.prototype.initBeforeEachGame = function() {
