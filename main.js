@@ -41,31 +41,22 @@ Game.prototype.initOnceOnLoad = function() {
 	game.retrieveHighScore();
 	drawWalls();
 
-	// Show start screen
-
-	// Draw key icons
+	// Draw keyboard controls panel
 	ctx.fillStyle = "#CCCCCC";
 	ctx.fillRect(140, 40, 120, 120);
-	ctx.fillStyle = "#000000";
-	ctx.textAlign = "center";
-	ctx.textBaseline = "middle";
-	ctx.font = "2em monospace";
-	ctx.fillText("W", width / 2 - 37.5, 67.5);
-	ctx.fillText("A", width / 2 - 12.5, 67.5);
-	ctx.fillText("S", width / 2 + 12.5, 67.5);
-	ctx.fillText("D", width / 2 + 37.5, 67.5);
+	
+	drawText("W", "2em monospace", "#000000", (width / 2) - 37.5, 67.5);
+	drawText("A", "2em monospace", "#000000", (width / 2) - 12.5, 67.5);
+	drawText("S", "2em monospace", "#000000", (width / 2) + 12.5, 67.5);
+	drawText("D", "2em monospace", "#000000", (width / 2) + 37.5, 67.5);
+	
+	drawText("or", "1.5em monospace", "#000000", (width / 2), 100);
 
-	// Draw "or" text between WASD key icons and arrow icons
-	ctx.font = "1.5em monospace";
-	ctx.fillText("or", width / 2, 100);
-
-	// Draw arrow icons to represent arrow keys. 
 	drawArrowIcon("up", (width / 2) - 37.5, 132.5);
 	drawArrowIcon("right", (width / 2) - 12.5, 132.5);
 	drawArrowIcon("down", (width / 2) + 12.5, 132.5);
 	drawArrowIcon("left", (width / 2) + 37.5, 132.5);
 };
-
 
 Game.prototype.initBeforeEachGame = function() {
 	clearCanvas();
@@ -97,14 +88,10 @@ Game.prototype.gameOver = function() {
 	// Show game over screen
 	ctx.fillStyle = "#CCCCCC";
 	ctx.fillRect(100, 140, 200, 120);
-	ctx.fillStyle = "#000000";
-	ctx.textAlign = "center";
-	ctx.textBaseline = "middle";
-	ctx.font = "2em monospace";
-	ctx.fillText("Game Over!", width / 2, height / 2 - 20);
-	ctx.font = "1.2em monospace";
-	ctx.fillText("Press Space", width / 2, height / 2 + 10);
-	ctx.fillText("to Restart", width / 2, height / 2 + 28);
+
+	drawText("Game Over!", "2em monospace", "#000000", width / 2, height / 2 - 20);
+	drawText("Press Space", "1.2em monospace", "#000000", width / 2, height / 2 + 10);
+	drawText("to Restart", "1.2em monospace", "#000000", width / 2, height / 2 + 28);
 };
 
 Game.prototype.resetListener = function(e) {
@@ -376,6 +363,15 @@ function getRandom() {
 	// (cellWidth - 2) is 18 and is used because two of the cells in the 20 cell row belong to the walls.
 	// The play area is an 18 cell by 18 cell grid. The walls do not count as part of the play area.
 	return Math.floor(Math.random() * (numCellsInRow - 2)) * cellWidth + cellWidth;
+}
+
+// Draw text on the canvas (used for keyboard control panel and game over panel)
+function drawText(text, font, color, xPos, yPos) {
+	ctx.fillStyle = color;
+	ctx.textAlign = "center";
+	ctx.textBaseline = "middle";
+	ctx.font = font;
+	ctx.fillText(text, xPos, yPos);
 }
 
 // Draw arrow icons to represent arrow keys. These are drawn to the right of the
