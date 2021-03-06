@@ -1,6 +1,5 @@
 //TODO
 
-// Make it so game doesn't auto start when resetting. Allow time for user input
 // Implement ES6 Modules
 // Refactor/tidy up code (get rid of global variables)
 // Clean up commenting
@@ -60,61 +59,13 @@ Game.prototype.initOnceOnLoad = function() {
 	ctx.font = "1.5em monospace";
 	ctx.fillText("or", width / 2, 100);
 
-	// Draw arrow icons to represent arrow keys. These are drawn to the right of the
-	// WASD key icons. The values chosen are intended to keep spacing symmetric.
-
-	// Up Arrow
-	ctx.beginPath(); // Arrow Stem
-	ctx.moveTo((width / 2 - 37.5) - 1, 132.5 - 8);
-	ctx.lineTo((width / 2 - 37.5) - 1, 132.5 + 8);
-	ctx.lineTo((width / 2 - 37.5) + 1, 132.5 + 8);
-	ctx.lineTo((width / 2 - 37.5) + 1, 132.5 - 8);
-	ctx.fill();
-	ctx.beginPath(); // Arrow Head
-	ctx.moveTo((width / 2 - 37.5) - 5, (132.5 - 8) + 4);
-	ctx.lineTo((width / 2 - 37.5), (132.5 - 8) - 2);
-	ctx.lineTo((width / 2 - 37.5) + 5, (132.5 - 8) + 4);
-	ctx.fill();
-
-	// Right Arrow (offset 2 pixels to the left for symmetry of pixel spacing)
-	ctx.beginPath();
-	ctx.moveTo(((width / 2 - 12.5) - 8) - 2, 132.5 - 1);
-	ctx.lineTo(((width / 2 - 12.5) - 8) - 2, 132.5 + 1);
-	ctx.lineTo(((width / 2 - 12.5) + 8) - 2, 132.5 + 1);
-	ctx.lineTo(((width / 2 - 12.5) + 8) - 2, 132.5 - 1);
-	ctx.fill();
-	ctx.beginPath();
-	ctx.moveTo((((width / 2 - 12.5) + 8) - 4) - 2, 132.5 - 5);
-	ctx.lineTo((((width / 2 - 12.5) + 8) + 2) - 2, 132.5);
-	ctx.lineTo((((width / 2 - 12.5) + 8) - 4) - 2, 132.5 + 5);
-	ctx.fill();
-
-	// Down Arrow
-	ctx.beginPath();
-	ctx.moveTo((width / 2 + 12.5) - 1, (132.5 - 8) - 2);
-	ctx.lineTo((width / 2 + 12.5) - 1, (132.5 + 8) - 2);
-	ctx.lineTo((width / 2 + 12.5) + 1, (132.5 + 8) - 2);
-	ctx.lineTo((width / 2 + 12.5) + 1, (132.5 - 8) - 2);
-	ctx.fill();
-	ctx.beginPath();
-	ctx.moveTo((width / 2 + 12.5) - 5, ((132.5 + 8) - 4) - 2);
-	ctx.lineTo((width / 2 + 12.5), ((132.5 + 8) + 2) - 2);
-	ctx.lineTo((width / 2 + 12.5) + 5, ((132.5 + 8) - 4) - 2);
-	ctx.fill();
-
-	// Left Arrow
-	ctx.beginPath();
-	ctx.moveTo((width / 2 + 37.5) - 8, 132.5 - 1);
-	ctx.lineTo((width / 2 + 37.5) - 8, 132.5 + 1);
-	ctx.lineTo((width / 2 + 37.5) + 8, 132.5 + 1);
-	ctx.lineTo((width / 2 + 37.5) + 8, 132.5 - 1);
-	ctx.fill();
-	ctx.beginPath();
-	ctx.moveTo((((width / 2 + 37.5) - 8) + 4), 132.5 - 5);
-	ctx.lineTo((((width / 2 + 37.5) - 8) - 2), 132.5);
-	ctx.lineTo((((width / 2 + 37.5) - 8) + 4), 132.5 + 5);
-	ctx.fill();
+	// Draw arrow icons to represent arrow keys. 
+	drawArrowIcon("up", (width / 2) - 37.5, 132.5);
+	drawArrowIcon("right", (width / 2) - 12.5, 132.5);
+	drawArrowIcon("down", (width / 2) + 12.5, 132.5);
+	drawArrowIcon("left", (width / 2) + 37.5, 132.5);
 };
+
 
 Game.prototype.initBeforeEachGame = function() {
 	clearCanvas();
@@ -425,4 +376,76 @@ function getRandom() {
 	// (cellWidth - 2) is 18 and is used because two of the cells in the 20 cell row belong to the walls.
 	// The play area is an 18 cell by 18 cell grid. The walls do not count as part of the play area.
 	return Math.floor(Math.random() * (numCellsInRow - 2)) * cellWidth + cellWidth;
+}
+
+// Draw arrow icons to represent arrow keys. These are drawn to the right of the
+// WASD key icons. The values chosen are intended to keep spacing symmetric.
+function drawArrowIcon(direction, xPos, yPos) {
+	let xOffsetStem;
+	let yOffsetStem;
+	let xOffsetHead;
+	let yOffsetHead;
+	let headPoint;
+	let yOffsetExtra = 0;
+	let xOffsetExtra = 0;
+	switch (direction) {
+		// Set variables related to drawing arrow heads and arrow stems, then draw arrow heads.
+		case "up":
+			xOffsetStem = 1;
+			yOffsetStem = 8;
+			xOffsetHead = 5;
+			yOffsetHead = 4;
+			headPoint = yOffsetHead - 6;
+			ctx.beginPath();
+			ctx.moveTo(xPos - xOffsetHead, (yPos - yOffsetStem) + yOffsetHead);
+			ctx.lineTo(xPos, (yPos - yOffsetStem) + headPoint);
+			ctx.lineTo(xPos + xOffsetHead, (yPos - yOffsetStem) + yOffsetHead);
+			ctx.fill();
+			break;
+		case "right":
+			xOffsetStem = 8;
+			yOffsetStem = 1;
+			xOffsetHead = -4;
+			yOffsetHead = 5;
+			headPoint = xOffsetHead + 6;
+			xOffsetExtra = 2; // move 2 pixels to the left for symmetry of pixel spacing
+			ctx.beginPath();
+			ctx.moveTo(((xPos + xOffsetStem) + xOffsetHead) - xOffsetExtra, yPos - yOffsetHead);
+			ctx.lineTo(((xPos + xOffsetStem) + headPoint) - xOffsetExtra , yPos);
+			ctx.lineTo(((xPos + xOffsetStem) + xOffsetHead) - xOffsetExtra, yPos + yOffsetHead);
+			ctx.fill();
+			break;
+		case "down":
+			xOffsetStem = 1;
+			yOffsetStem = 8;
+			xOffsetHead = 5;
+			yOffsetHead = -4;
+			headPoint = yOffsetHead + 6;
+			yOffsetExtra = 2; // move 2 pixels up to vertically align down arrow with other arrows
+			ctx.beginPath();
+			ctx.moveTo(xPos - xOffsetHead, ((yPos + yOffsetStem) + yOffsetHead) - yOffsetExtra);
+			ctx.lineTo(xPos, ((yPos + yOffsetStem) + headPoint) - yOffsetExtra);
+			ctx.lineTo(xPos + xOffsetHead, ((yPos + yOffsetStem) + yOffsetHead) - yOffsetExtra);
+			ctx.fill();
+			break;
+		case "left":
+			xOffsetStem = 8;
+			yOffsetStem = 1;
+			xOffsetHead = 4;
+			yOffsetHead = 5;
+			headPoint = xOffsetHead - 6;
+			ctx.beginPath();
+			ctx.moveTo(((xPos - xOffsetStem) + xOffsetHead) - xOffsetExtra, yPos - yOffsetHead);
+			ctx.lineTo(((xPos - xOffsetStem) + headPoint) - xOffsetExtra , yPos);
+			ctx.lineTo(((xPos - xOffsetStem) + xOffsetHead) - xOffsetExtra, yPos + yOffsetHead);
+			ctx.fill();
+			break;
+	}
+	// Draw arrow stems
+	ctx.beginPath();
+	ctx.moveTo(((xPos) - xOffsetStem) - xOffsetExtra, (yPos - yOffsetStem) - yOffsetExtra);
+	ctx.lineTo(((xPos) - xOffsetStem) - xOffsetExtra, (yPos + yOffsetStem) - yOffsetExtra);
+	ctx.lineTo(((xPos) + xOffsetStem) - xOffsetExtra, (yPos + yOffsetStem) - yOffsetExtra);
+	ctx.lineTo(((xPos) + xOffsetStem) - xOffsetExtra, (yPos - yOffsetStem) - yOffsetExtra);
+	ctx.fill();
 }
