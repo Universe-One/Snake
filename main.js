@@ -1,9 +1,10 @@
 //TODO
 
-// Implement start screen
+// Make it so game doesn't auto start when resetting. Allow time for user input
 // Implement ES6 Modules
 // Refactor/tidy up code (get rid of global variables)
 // Clean up commenting
+// Turn game over "screen" and start "screen" to "panel" in comments
 
 
 // Many of the calculations in this program are done using cellWidth and numCellsInRow, but can just as easy
@@ -63,7 +64,6 @@ Game.prototype.initOnceOnLoad = function() {
 	// WASD key icons. The values chosen are intended to keep spacing symmetric.
 
 	// Up Arrow
-
 	ctx.beginPath(); // Arrow Stem
 	ctx.moveTo((width / 2 - 37.5) - 1, 132.5 - 8);
 	ctx.lineTo((width / 2 - 37.5) - 1, 132.5 + 8);
@@ -140,7 +140,7 @@ Game.prototype.gameOver = function() {
 	drawSnake();
 
 	clearInterval(game.intervalId);
-	console.log("Game Over!");
+	
 	window.addEventListener("keydown", game.resetListener);
 
 	// Show game over screen
@@ -179,8 +179,9 @@ Game.prototype.reset = function() {
 	food.xPos = 320;
 	food.yPos = height / 2;
 
-	// Start a new game loop
-	game.intervalId = setInterval(gameLoop, game.gameSpeed);
+	// Set the game back to the state it was in when it first loaded, i.e., with the snake still
+	// and awaiting user input. The only difference is that the keyboard control panel will not be displayed.
+	game.intervalId = null;
 	game.initBeforeEachGame();
 };
 
