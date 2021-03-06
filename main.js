@@ -50,70 +50,69 @@ Game.prototype.initOnceOnLoad = function() {
 	ctx.textAlign = "center";
 	ctx.textBaseline = "middle";
 	ctx.font = "2em monospace";
-	ctx.fillText("W", width / 2 - 30, 62.5);
-	ctx.fillText("A", width / 2 - 30, 87.5);
-	ctx.fillText("S", width / 2 - 30, 112.5);
-	ctx.fillText("D", width / 2 - 30, 137.5);
+	ctx.fillText("W", width / 2 - 37.5, 67.5);
+	ctx.fillText("A", width / 2 - 12.5, 67.5);
+	ctx.fillText("S", width / 2 + 12.5, 67.5);
+	ctx.fillText("D", width / 2 + 37.5, 67.5);
 
-	ctx.font = "2em monospace";
-	ctx.fillText("/", width / 2, 62.5);
-	ctx.fillText("/", width / 2, 87.5);
-	ctx.fillText("/", width / 2, 112.5);
-	ctx.fillText("/", width / 2, 137.5);
+	// Draw "or" text between WASD key icons and arrow icons
+	ctx.font = "1.5em monospace";
+	ctx.fillText("or", width / 2, 100);
 
 	// Draw arrow icons to represent arrow keys. These are drawn to the right of the
 	// WASD key icons. The values chosen are intended to keep spacing symmetric.
 
 	// Up Arrow
+
 	ctx.beginPath(); // Arrow Stem
-	ctx.moveTo((width / 2 + 30) - 1, 62.5 - 8);
-	ctx.lineTo((width / 2 + 30) - 1, 62.5 + 8);
-	ctx.lineTo((width / 2 + 30) + 1, 62.5 + 8);
-	ctx.lineTo((width / 2 + 30) + 1, 62.5 - 8);
+	ctx.moveTo((width / 2 - 37.5) - 1, 132.5 - 8);
+	ctx.lineTo((width / 2 - 37.5) - 1, 132.5 + 8);
+	ctx.lineTo((width / 2 - 37.5) + 1, 132.5 + 8);
+	ctx.lineTo((width / 2 - 37.5) + 1, 132.5 - 8);
 	ctx.fill();
 	ctx.beginPath(); // Arrow Head
-	ctx.moveTo((width / 2 + 30) - 5, (62.5 - 8) + 4);
-	ctx.lineTo((width / 2 + 30), (62.5 - 8) - 2);
-	ctx.lineTo((width / 2 + 30) + 5, (62.5 - 8) + 4);
+	ctx.moveTo((width / 2 - 37.5) - 5, (132.5 - 8) + 4);
+	ctx.lineTo((width / 2 - 37.5), (132.5 - 8) - 2);
+	ctx.lineTo((width / 2 - 37.5) + 5, (132.5 - 8) + 4);
 	ctx.fill();
 
-	// Right Arrow
+	// Right Arrow (offset 2 pixels to the left for symmetry of pixel spacing)
 	ctx.beginPath();
-	ctx.moveTo((width / 2 + 30) - 8, 87.5 - 1);
-	ctx.lineTo((width / 2 + 30) - 8, 87.5 + 1);
-	ctx.lineTo((width / 2 + 30) + 8, 87.5 + 1);
-	ctx.lineTo((width / 2 + 30) + 8, 87.5 - 1);
+	ctx.moveTo(((width / 2 - 12.5) - 8) - 2, 132.5 - 1);
+	ctx.lineTo(((width / 2 - 12.5) - 8) - 2, 132.5 + 1);
+	ctx.lineTo(((width / 2 - 12.5) + 8) - 2, 132.5 + 1);
+	ctx.lineTo(((width / 2 - 12.5) + 8) - 2, 132.5 - 1);
 	ctx.fill();
 	ctx.beginPath();
-	ctx.moveTo((((width / 2 + 30) + 8) - 4), 87.5 - 5);
-	ctx.lineTo((((width / 2 + 30) + 8) + 2), 87.5);
-	ctx.lineTo((((width / 2 + 30) + 8) - 4), 87.5 + 5);
+	ctx.moveTo((((width / 2 - 12.5) + 8) - 4) - 2, 132.5 - 5);
+	ctx.lineTo((((width / 2 - 12.5) + 8) + 2) - 2, 132.5);
+	ctx.lineTo((((width / 2 - 12.5) + 8) - 4) - 2, 132.5 + 5);
 	ctx.fill();
 
 	// Down Arrow
 	ctx.beginPath();
-	ctx.moveTo((width / 2 + 30) - 1, (112.5 - 8) - 3);
-	ctx.lineTo((width / 2 + 30) - 1, (112.5 + 8) - 3);
-	ctx.lineTo((width / 2 + 30) + 1, (112.5 + 8) - 3);
-	ctx.lineTo((width / 2 + 30) + 1, (112.5 - 8) - 3);
+	ctx.moveTo((width / 2 + 12.5) - 1, (132.5 - 8) - 2);
+	ctx.lineTo((width / 2 + 12.5) - 1, (132.5 + 8) - 2);
+	ctx.lineTo((width / 2 + 12.5) + 1, (132.5 + 8) - 2);
+	ctx.lineTo((width / 2 + 12.5) + 1, (132.5 - 8) - 2);
 	ctx.fill();
 	ctx.beginPath();
-	ctx.moveTo((width / 2 + 30) - 5, ((112.5 + 8) - 3) - 4);
-	ctx.lineTo((width / 2 + 30), ((112.5 + 8) - 3) + 2);
-	ctx.lineTo((width / 2 + 30) + 5, ((112.5 + 8) - 3) - 4);
+	ctx.moveTo((width / 2 + 12.5) - 5, ((132.5 + 8) - 4) - 2);
+	ctx.lineTo((width / 2 + 12.5), ((132.5 + 8) + 2) - 2);
+	ctx.lineTo((width / 2 + 12.5) + 5, ((132.5 + 8) - 4) - 2);
 	ctx.fill();
 
 	// Left Arrow
 	ctx.beginPath();
-	ctx.moveTo((width / 2 + 30) - 8, 137.5 - 1);
-	ctx.lineTo((width / 2 + 30) - 8, 137.5 + 1);
-	ctx.lineTo((width / 2 + 30) + 8, 137.5 + 1);
-	ctx.lineTo((width / 2 + 30) + 8, 137.5 - 1);
+	ctx.moveTo((width / 2 + 37.5) - 8, 132.5 - 1);
+	ctx.lineTo((width / 2 + 37.5) - 8, 132.5 + 1);
+	ctx.lineTo((width / 2 + 37.5) + 8, 132.5 + 1);
+	ctx.lineTo((width / 2 + 37.5) + 8, 132.5 - 1);
 	ctx.fill();
 	ctx.beginPath();
-	ctx.moveTo((((width / 2 + 30) - 8) + 4), 137.5 - 5);
-	ctx.lineTo((((width / 2 + 30) - 8) - 2), 137.5);
-	ctx.lineTo((((width / 2 + 30) - 8) + 4), 137.5 + 5);
+	ctx.moveTo((((width / 2 + 37.5) - 8) + 4), 132.5 - 5);
+	ctx.lineTo((((width / 2 + 37.5) - 8) - 2), 132.5);
+	ctx.lineTo((((width / 2 + 37.5) - 8) + 4), 132.5 + 5);
 	ctx.fill();
 };
 
