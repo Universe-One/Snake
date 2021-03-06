@@ -42,52 +42,78 @@ Game.prototype.initOnceOnLoad = function() {
 	drawWalls();
 
 	// Show start screen
+
+	// Draw key icons
 	ctx.fillStyle = "#CCCCCC";
-	ctx.fillRect(140, 60, 120, 120);
+	ctx.fillRect(140, 40, 120, 120);
 	ctx.fillStyle = "#000000";
 	ctx.textAlign = "center";
 	ctx.textBaseline = "middle";
 	ctx.font = "2em monospace";
-	ctx.fillText("W", width / 2 - 30, 82.5);
-	ctx.fillText("A", width / 2 - 30, 107.5);
-	ctx.fillText("S", width / 2 - 30, 132.5);
-	ctx.fillText("D", width / 2 - 30, 157.5);
+	ctx.fillText("W", width / 2 - 30, 62.5);
+	ctx.fillText("A", width / 2 - 30, 87.5);
+	ctx.fillText("S", width / 2 - 30, 112.5);
+	ctx.fillText("D", width / 2 - 30, 137.5);
+
+	ctx.font = "2em monospace";
+	ctx.fillText("/", width / 2, 62.5);
+	ctx.fillText("/", width / 2, 87.5);
+	ctx.fillText("/", width / 2, 112.5);
+	ctx.fillText("/", width / 2, 137.5);
 
 	// Draw arrow icons to represent arrow keys. These are drawn to the right of the
 	// WASD key icons. The values chosen are intended to keep spacing symmetric.
-	// The subtraction of 1 at the end of each y value is a pixel offset to vertically
-	// align the arrow icons with their key icon counterparts.
-	
+
 	// Up Arrow
-	ctx.beginPath();
-	ctx.moveTo((width / 2 + 30) - 1, (82.5 - 8) - 1);
-	ctx.lineTo((width / 2 + 30) - 1, (82.5 + 8) - 1);
-	ctx.lineTo((width / 2 + 30) + 1, (82.5 + 8) - 1);
-	ctx.lineTo((width / 2 + 30) + 1, (82.5 - 8) - 1);
+	ctx.beginPath(); // Arrow Stem
+	ctx.moveTo((width / 2 + 30) - 1, 62.5 - 8);
+	ctx.lineTo((width / 2 + 30) - 1, 62.5 + 8);
+	ctx.lineTo((width / 2 + 30) + 1, 62.5 + 8);
+	ctx.lineTo((width / 2 + 30) + 1, 62.5 - 8);
+	ctx.fill();
+	ctx.beginPath(); // Arrow Head
+	ctx.moveTo((width / 2 + 30) - 5, (62.5 - 8) + 4);
+	ctx.lineTo((width / 2 + 30), (62.5 - 8) - 2);
+	ctx.lineTo((width / 2 + 30) + 5, (62.5 - 8) + 4);
 	ctx.fill();
 
 	// Right Arrow
 	ctx.beginPath();
-	ctx.moveTo((width / 2 + 30) - 8, (107.5 - 1) - 1);
-	ctx.lineTo((width / 2 + 30) - 8, (107.5 + 1) - 1);
-	ctx.lineTo((width / 2 + 30) + 8, (107.5 + 1) - 1);
-	ctx.lineTo((width / 2 + 30) + 8, (107.5 - 1) - 1);
+	ctx.moveTo((width / 2 + 30) - 8, 87.5 - 1);
+	ctx.lineTo((width / 2 + 30) - 8, 87.5 + 1);
+	ctx.lineTo((width / 2 + 30) + 8, 87.5 + 1);
+	ctx.lineTo((width / 2 + 30) + 8, 87.5 - 1);
+	ctx.fill();
+	ctx.beginPath();
+	ctx.moveTo((((width / 2 + 30) + 8) - 4), 87.5 - 5);
+	ctx.lineTo((((width / 2 + 30) + 8) + 2), 87.5);
+	ctx.lineTo((((width / 2 + 30) + 8) - 4), 87.5 + 5);
 	ctx.fill();
 
 	// Down Arrow
 	ctx.beginPath();
-	ctx.moveTo((width / 2 + 30) - 1, (132.5 - 8) - 1);
-	ctx.lineTo((width / 2 + 30) - 1, (132.5 + 8) - 1);
-	ctx.lineTo((width / 2 + 30) + 1, (132.5 + 8) - 1);
-	ctx.lineTo((width / 2 + 30) + 1, (132.5 - 8) - 1);
+	ctx.moveTo((width / 2 + 30) - 1, (112.5 - 8) - 3);
+	ctx.lineTo((width / 2 + 30) - 1, (112.5 + 8) - 3);
+	ctx.lineTo((width / 2 + 30) + 1, (112.5 + 8) - 3);
+	ctx.lineTo((width / 2 + 30) + 1, (112.5 - 8) - 3);
+	ctx.fill();
+	ctx.beginPath();
+	ctx.moveTo((width / 2 + 30) - 5, ((112.5 + 8) - 3) - 4);
+	ctx.lineTo((width / 2 + 30), ((112.5 + 8) - 3) + 2);
+	ctx.lineTo((width / 2 + 30) + 5, ((112.5 + 8) - 3) - 4);
 	ctx.fill();
 
 	// Left Arrow
 	ctx.beginPath();
-	ctx.moveTo((width / 2 + 30) - 8, (157.5 - 1) - 1);
-	ctx.lineTo((width / 2 + 30) - 8, (157.5 + 1) - 1);
-	ctx.lineTo((width / 2 + 30) + 8, (157.5 + 1) - 1);
-	ctx.lineTo((width / 2 + 30) + 8, (157.5 - 1) - 1);
+	ctx.moveTo((width / 2 + 30) - 8, 137.5 - 1);
+	ctx.lineTo((width / 2 + 30) - 8, 137.5 + 1);
+	ctx.lineTo((width / 2 + 30) + 8, 137.5 + 1);
+	ctx.lineTo((width / 2 + 30) + 8, 137.5 - 1);
+	ctx.fill();
+	ctx.beginPath();
+	ctx.moveTo((((width / 2 + 30) - 8) + 4), 137.5 - 5);
+	ctx.lineTo((((width / 2 + 30) - 8) - 2), 137.5);
+	ctx.lineTo((((width / 2 + 30) - 8) + 4), 137.5 + 5);
 	ctx.fill();
 };
 
