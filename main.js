@@ -3,12 +3,11 @@
 // Implement ES6 Modules
 // Refactor/tidy up code (get rid of global variables)
 // Clean up commenting
-// Turn game over "screen" and start "screen" to "panel" in comments
+// Add a canvas(or some other aptly named) object for clearcanvas, drawText, etc. to be methods of
 
 
-// Many of the calculations in this program are done using cellWidth and numCellsInRow, but can just as easy
+// Some of the calculations in this program are done using cellWidth or numCellsInRow, but can just as easily
 // be done using cellHeight and numCellsInColumn since they are symmetric.
-
 const canvas = document.querySelector("#game-canvas");
 const ctx = canvas.getContext("2d");
 const score = document.querySelector("#current-score");
@@ -21,6 +20,7 @@ const numCellsInColumn = 20;
 const cellWidth = canvas.width / numCellsInRow;
 const cellHeight = canvas.height / numCellsInColumn;
 
+// Game object contains game state and methods related to game state.
 function Game() {
 	this.isOver = false;
 	this.score = 0;
@@ -65,8 +65,8 @@ Game.prototype.initOnceOnLoad = function() {
 // and then every time the game is reset, so that the game may be played again.
 Game.prototype.initBeforeEachGame = function() {
 	clearCanvas();
-	drawSnake();
-	drawFood();
+	snake.draw();
+	food.draw();
 };
 
 // Start the game loop and set the speed to whatever the game speed is. A game can only be started
@@ -91,7 +91,7 @@ Game.prototype.gameOver = function() {
 	snake.cells.shift();
 
 	// Draw the snake one final time in the state it was in when game over triggered.
-	drawSnake();
+	snake.draw();
 
 	// Stop the current game loop
 	clearInterval(game.intervalId);
@@ -117,6 +117,7 @@ Game.prototype.resetListener = function(e) {
 	}
 };
 
+// Reset the game, preparing it to be played again.
 Game.prototype.reset = function() {
 	window.removeEventListener("keydown", game.resetListener);
 
@@ -135,27 +136,158 @@ Game.prototype.reset = function() {
 	food.yPos = height / 2;
 
 	// Set the game back to the state it was in when it first loaded, i.e., with the snake still
-	// and awaiting user input. The only difference is that the keyboard control panel will not be displayed.
+	// and awaiting user input. The only difference is that the keyboard control panel will not be displayed
+	// since the user is already familiar with the controls.
 	game.intervalId = null;
 	game.initBeforeEachGame();
 };
 
+// Snake object contains state related to the snake and methods related to the snake.
 function Snake() {
-	// this.cells[0] is the snake's head and this.cells[this.cells.length - 1] is the snake's tail
+	// An array of objects, each with xPos and yPos properties, are used to represent the snake's cells.
+	// this.cells[0] is the snake's head and this.cells[this.cells.length - 1] is the snake's tail.
 	this.cells = [{xPos: 120, yPos: 200}, 
 				   {xPos: 100, yPos: 200}, 
 				   {xPos: 80, yPos: 200}, 
 				   {xPos: 60, yPos: 200}];
 	this.direction = "right";
 	this.directionQueue = [];
+	// snake.oldTail is used to grow the snake when food is eaten and to draw the final state of the snake
+	// if a collision occurs with the outer walls.
 	this.oldTail = null;
 }
 
+// Take every cell in the snake object and draw it according to its x and y position
+Snake.prototype.draw = function() {
+	ctx.fillStyle = "rgb(0, 192, 0)"
+	
+	snake.cells.forEach(function(element) {
+		ctx.fillRect(element.xPos, element.yPos, cellWidth, cellHeight);
+	})
+}
+
+// Physically move the snake and handle operations related to the snake's movement such as eating food
+// and detecting collision.
+Snake.prototype.move = function() {
+	// If the the direction queue is not empty, take the next-in-line direction and apply it to the snake
+	// before removing it from the queue.
+	if (snake.directionQueue.length !== 0) {
+		snake.direction = snake.directionQueue[0];
+		snake.directionQueue.shift();
+	}
+
+	// Remove the last cell (the tail) from the cells array
+	snake.oldTail = snake.cells.pop();
+
+	// Attach a cell to the beginning of the cells array, giving the snake a new head.
+	// The removal of the snake's tail and attachment of a new head is what gives the appearance
+	// of movement.
+	if (snake.direction === "up") {
+		snake.cells.unshift({xPos: snake.cells[0].xPos, yPos: snake.cells[0].yPos - cellHeight});
+	} else if (snake.direction === "right") {
+		snake.cells.unshift({xPos: snake.cells[0].xPos + cellWidth, yPos: snake.cells[0].yPos});
+	} else if (snake.direction === "down") {
+		snake.cells.unshift({xPos: snake.cells[0].xPos, yPos: snake.cells[0].yPos + cellHeight});
+	} else if (snake.direction === "left") {
+		snake.cells.unshift({xPos: snake.cells[0].xPos - cellWidth, yPos: snake.cells[0].yPos});
+	}
+
+	// If snake's head occupies the same cell as a piece of food, eat it.
+	if (snake.cells[0].xPos === food.xPos && snake.cells[0].yPos === food.yPos) {
+		food.eat();
+	}
+
+	// Detect collision between the snake and itself and between the snake and the outer walls.
+	snake.detectCollision();
+
+	// Call snake.draw() here if the game is not over. This is the default behavior. 
+	// If the game is over, snake.draw() is instead called from game.gameOver() before 
+	// the game over screen is drawn. The snake needs to be drawn one final time in
+	// game.gameOver() to show the state of the snake when game over triggers. It needs 
+	// to be drawn before the game over screen so the snake never renders above the
+	// game over screen.
+	if (!game.isOver) {
+		snake.draw();
+	}
+}
+
+// When snake.grow() is called from food.eat(), it reattaches the tail that was just removed
+// this snake.move() step. This grows the snake by one unit rather than just moving it.
+Snake.prototype.grow = function() {
+	snake.cells.push(snake.oldTail);
+}
+
+// Check if snake's head occupies a cell which is also occupied by an outer wall or another snake cell.
+// If it does, then the game is over.
+Snake.prototype.detectCollision = function() {
+	// Detect collision with walls
+	if (snake.cells[0].xPos < cellWidth ||
+	snake.cells[0].xPos >= width - cellWidth ||
+	snake.cells[0].yPos < cellHeight ||
+	snake.cells[0].yPos >= height - cellHeight) {
+		game.gameOver();
+	}
+
+	// Detect collision with self
+	for (let i = 1; i < snake.cells.length; i++) {
+		if (snake.cells[0].xPos === snake.cells[i].xPos &&
+		snake.cells[0].yPos === snake.cells[i].yPos) {
+			game.gameOver();
+		}
+	}
+}
+
+// Food object contains position of food and methods related to food.
 function Food() {
 	this.xPos = 320;
 	this.yPos = height / 2;
 }
 
+// If this is the first time drawing food, draw it at the specified default location. 
+// Otherwise, draw it at a random location.
+Food.prototype.draw = function() {
+	ctx.fillStyle = "rgb(255, 0, 0)"
+
+	ctx.fillRect(food.xPos, food.yPos, cellWidth, cellHeight);
+}
+
+// Increment score, update high score if needed, grow the snake, generate random coordinates 
+// for new piece of food and draw it.
+Food.prototype.eat = function() {
+	game.score += 5;
+
+	if (game.highScore <= game.score) {
+		game.highScore = game.score;
+
+		localStorage.setItem("highScore", game.highScore);
+	}
+
+	score.textContent = `Score: ${game.score}`;
+	highScore.textContent = `High Score: ${game.highScore}`;
+
+	snake.grow();
+
+	// First, choose a random cell. If this cell is occupied by the snake,
+	// choose another random cell. Continue this process until a cell is
+	// chosen which is not occupied by the snake. Draw the piece of food there.
+	do {
+		food.xPos = food.getRandom();
+		food.yPos = food.getRandom();
+	} while (snake.cells.some(function(element) {
+		return element.xPos === food.xPos && element.yPos === food.yPos;
+	}));
+	
+	food.draw();
+}
+
+// Gets a random cell from the 18x18 cell play area. The play area does not include cells occupied by walls.
+Food.prototype.getRandom = function() {
+	// (cellWidth - 2) is 18 and is used because two of the cells in the 20 cell row belong to the walls.
+	// The play area is an 18 cell by 18 cell grid. The walls do not count as part of the play area.
+	return Math.floor(Math.random() * (numCellsInRow - 2)) * cellWidth + cellWidth;
+};
+
+// Instantiate objects
 const game = new Game();
 const snake = new Snake();
 const food = new Food();
@@ -164,11 +296,10 @@ const food = new Food();
 game.initBeforeEachGame();
 game.initOnceOnLoad();
 
-
 function gameLoop(timestamp) {
 	clearCanvas();
-	drawFood();
-	moveSnake();
+	food.draw();
+	snake.move();
 }
 
 // Keyboard controls
@@ -261,125 +392,9 @@ function drawWalls() {
 	}
 }
 
-// Take every cell in the snake object and draw it according to its x and y position
-function drawSnake() {
-	ctx.fillStyle = "rgb(0, 192, 0)"
-	
-	snake.cells.forEach(function(element) {
-		ctx.fillRect(element.xPos, element.yPos, cellWidth, cellHeight);
-	})
-}
-
-function moveSnake() {
-	if (snake.directionQueue.length !== 0) {
-		snake.direction = snake.directionQueue[0];
-		snake.directionQueue.shift();
-	}
-
-	// Remove the last cell (the tail) from the cells array
-	snake.oldTail = snake.cells.pop();
-
-	// Attach a cell to the beginning of the cells array, giving the snake a new head.
-	// The removal of the snake's tail and attachment of a new head is what gives the appearance
-	// of movement.
-	if (snake.direction === "up") {
-		snake.cells.unshift({xPos: snake.cells[0].xPos, yPos: snake.cells[0].yPos - cellHeight});
-	} else if (snake.direction === "right") {
-		snake.cells.unshift({xPos: snake.cells[0].xPos + cellWidth, yPos: snake.cells[0].yPos});
-	} else if (snake.direction === "down") {
-		snake.cells.unshift({xPos: snake.cells[0].xPos, yPos: snake.cells[0].yPos + cellHeight});
-	} else if (snake.direction === "left") {
-		snake.cells.unshift({xPos: snake.cells[0].xPos - cellWidth, yPos: snake.cells[0].yPos});
-	}
-
-	if (snake.cells[0].xPos === food.xPos && snake.cells[0].yPos === food.yPos) {
-		eatFood();
-	}
-
-	detectCollision();
-
-	// Call drawSnake() here if the game is not over. This is the default behavior. 
-	// If the game is over, drawSnake() is instead called from game.gameOver() before 
-	// the game over screen is drawn. The snake needs to be drawn one final time in
-	// game.gameOver() to show the state of the snake when game over triggers. It needs 
-	// to be drawn before the game over screen so the snake never renders above the
-	// game over screen.
-	if (!game.isOver) {
-		drawSnake();
-	}
-}
-
-// When growSnake() is called from eatFood(), it reattaches the tail that was just removed
-// this moveSnake() step. This grows the snake by one unit rather than just moving it.
-function growSnake() {
-	snake.cells.push(snake.oldTail);
-}
-
-function detectCollision() {
-	// Detect collision with walls
-	if (snake.cells[0].xPos < cellWidth ||
-	snake.cells[0].xPos >= width - cellWidth ||
-	snake.cells[0].yPos < cellHeight ||
-	snake.cells[0].yPos >= height - cellHeight) {
-		game.gameOver();
-	}
-
-	// Detect collision with self
-	for (let i = 1; i < snake.cells.length; i++) {
-		if (snake.cells[0].xPos === snake.cells[i].xPos &&
-		snake.cells[0].yPos === snake.cells[i].yPos) {
-			game.gameOver();
-		}
-	}
-}
-
-// If this is the first time drawing food, draw it at the specified default location. 
-// Otherwise, draw it at a random location.
-function drawFood() {
-	ctx.fillStyle = "rgb(255, 0, 0)"
-
-	ctx.fillRect(food.xPos, food.yPos, cellWidth, cellHeight);
-}
-
-// Increment score, update high score if needed, grow the snake, generate random coordinates 
-// for new piece of food and draw it.
-function eatFood() {
-	game.score += 5;
-
-	if (game.highScore <= game.score) {
-		game.highScore = game.score;
-
-		localStorage.setItem("highScore", game.highScore);
-	}
-
-	score.textContent = `Score: ${game.score}`;
-	highScore.textContent = `High Score: ${game.highScore}`;
-
-	growSnake();
-
-	// First, choose a random cell. If this cell is occupied by the snake,
-	// choose another random cell. Continue this process until a cell is
-	// chosen which is not occupied by the snake. Draw the piece of food there.
-	do {
-		food.xPos = getRandom();
-		food.yPos = getRandom();
-	} while (snake.cells.some(function(element) {
-		return element.xPos === food.xPos && element.yPos === food.yPos;
-	}));
-	
-	drawFood();
-}
-
 // Clears the whole 18x18 cell play area, leaving the walls in tact.
 function clearCanvas() {
 	ctx.clearRect(cellWidth, cellHeight, width - (cellWidth * 2), height - (cellHeight * 2));
-}
-
-// Gets a random cell from the 18x18 cell play area. The play area does not include cells occupied by walls.
-function getRandom() {
-	// (cellWidth - 2) is 18 and is used because two of the cells in the 20 cell row belong to the walls.
-	// The play area is an 18 cell by 18 cell grid. The walls do not count as part of the play area.
-	return Math.floor(Math.random() * (numCellsInRow - 2)) * cellWidth + cellWidth;
 }
 
 // Draw text on the canvas (used for keyboard control panel and game over panel)
