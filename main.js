@@ -29,19 +29,22 @@ function Game() {
 	this.intervalId = null;
 }
 
+// If there is a stored high score, retrieve it. Otherwise, set high score to 0.
+// Then, set the high score text to be whatever the high score is.
 Game.prototype.retrieveHighScore = function() {
 	localStorage.getItem("highScore") !== null ? 
 	this.highScore = localStorage.getItem("highScore") :
 	this.highScore = 0;
-	
 	highScore.textContent = `High Score: ${game.highScore}`;
 };
 
+// Retrieve high score from localStorage, draw walls, and draw the keyboard controls panel so the user
+// understands the controls. This method will be run one time when the game first loads, and will never
+// need to be run again.
 Game.prototype.initOnceOnLoad = function() {
 	game.retrieveHighScore();
 	drawWalls();
 
-	// Draw keyboard controls panel
 	ctx.fillStyle = "#CCCCCC";
 	ctx.fillRect(140, 40, 120, 120);
 	
@@ -58,16 +61,25 @@ Game.prototype.initOnceOnLoad = function() {
 	drawArrowIcon("left", (width / 2) + 37.5, 132.5);
 };
 
+// Clear the canvas, draw the snake, and draw the food. This method is called when the game first loads,
+// and then every time the game is reset, so that the game may be played again.
 Game.prototype.initBeforeEachGame = function() {
 	clearCanvas();
 	drawSnake();
 	drawFood();
 };
 
+// Start the game loop and set the speed to whatever the game speed is. A game can only be started
+// if there is no current game being played. One cannot play multiple games at once. This is ensured
+// by the fact that a new game may only begin when game.intervalId is equal to null. When a new game is
+// able to be started and a valid control is pressed, an intervalId is assigned, starting the game. 
+// When it ends and the game is reset, intervalId is set to null, and the user is again able to start
+// a new game by inputting a valid control, and so on.
 Game.prototype.startGame = function() {
 	game.intervalId = setInterval(gameLoop, game.gameSpeed);
 }
 
+// Handle end-of-game operations
 Game.prototype.gameOver = function() {
 	this.isOver = true;
 
@@ -81,19 +93,24 @@ Game.prototype.gameOver = function() {
 	// Draw the snake one final time in the state it was in when game over triggered.
 	drawSnake();
 
+	// Stop the current game loop
 	clearInterval(game.intervalId);
 	
+	// Add a listener that resets the game when Space is pressed.
 	window.addEventListener("keydown", game.resetListener);
 
 	// Show game over screen
 	ctx.fillStyle = "#CCCCCC";
 	ctx.fillRect(100, 140, 200, 120);
 
+	// Prompt user to start a new game by pressing Space.
 	drawText("Game Over!", "2em monospace", "#000000", width / 2, height / 2 - 20);
 	drawText("Press Space", "1.2em monospace", "#000000", width / 2, height / 2 + 10);
 	drawText("to Restart", "1.2em monospace", "#000000", width / 2, height / 2 + 28);
 };
 
+// Add listener when game is over, allowing game to be reset when Space is pressed.
+// Remove listener when Space is pressed and game is reset.
 Game.prototype.resetListener = function(e) {
 	if (e.code === "Space") {
 		game.reset();
