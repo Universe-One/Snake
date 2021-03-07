@@ -20,6 +20,21 @@ const numCellsInColumn = 20;
 const cellWidth = canvas.width / numCellsInRow;
 const cellHeight = canvas.height / numCellsInColumn;
 
+/*const c = {
+	width: canvas.width,
+	height: canvas.height,
+	numCellsInRow: 20,
+	numCellsinColumn: 20,
+	cellWidth: canvas.width / numCellsInRow,
+	cellHeight: canvas.height / numCellsInColumn,
+	clearCanvas: function() {
+		ctx.clearRect(cellWidth, cellHeight, width - (cellWidth * 2), height - (cellHeight * 2));
+	}
+}
+
+console.log(c.clearCanvas());
+*/
+
 // Game object contains game state and methods related to game state.
 function Game() {
 	this.isOver = false;
@@ -69,15 +84,23 @@ Game.prototype.initBeforeEachGame = function() {
 	food.draw();
 };
 
-// Start the game loop and set the speed to whatever the game speed is. A game can only be started
-// if there is no current game being played. One cannot play multiple games at once. This is ensured
-// by the fact that a new game may only begin when game.intervalId is equal to null. When a new game is
-// able to be started and a valid control is pressed, an intervalId is assigned, starting the game. 
-// When it ends and the game is reset, intervalId is set to null, and the user is again able to start
-// a new game by inputting a valid control, and so on.
+// Clear the canvas, draw the piece of food, and move the snake. This is the game loop that is called by
+// setInterval over and over again (after a specified delay) until the game is over.
+Game.prototype.loop = function(timestamp) {
+	clearCanvas();
+	food.draw();
+	snake.move();
+};
+
+// Start the game loop and set the delay to whatever the game speed is (lower speed values make the game
+// update faster). A game can only be started if there is no current game being played. One cannot play 
+// multiple games at once. This is ensured by the fact that a new game may only begin when game.intervalId 
+// is equal to null. When a new game is able to be started and a valid control is pressed, an intervalId is 
+// assigned, starting the game. When it ends and the game is reset, intervalId is set to null, and the user 
+// is again able to start a new game by inputting a valid control, and so on.
 Game.prototype.startGame = function() {
-	game.intervalId = setInterval(gameLoop, game.gameSpeed);
-}
+	game.intervalId = setInterval(game.loop, game.gameSpeed);
+};
 
 // Handle end-of-game operations
 Game.prototype.gameOver = function() {
@@ -164,7 +187,7 @@ Snake.prototype.draw = function() {
 	snake.cells.forEach(function(element) {
 		ctx.fillRect(element.xPos, element.yPos, cellWidth, cellHeight);
 	})
-}
+};
 
 // Physically move the snake and handle operations related to the snake's movement such as eating food
 // and detecting collision.
@@ -209,13 +232,13 @@ Snake.prototype.move = function() {
 	if (!game.isOver) {
 		snake.draw();
 	}
-}
+};
 
 // When snake.grow() is called from food.eat(), it reattaches the tail that was just removed
 // this snake.move() step. This grows the snake by one unit rather than just moving it.
 Snake.prototype.grow = function() {
 	snake.cells.push(snake.oldTail);
-}
+};
 
 // Check if snake's head occupies a cell which is also occupied by an outer wall or another snake cell.
 // If it does, then the game is over.
@@ -235,7 +258,7 @@ Snake.prototype.detectCollision = function() {
 			game.gameOver();
 		}
 	}
-}
+};
 
 // Food object contains position of food and methods related to food.
 function Food() {
@@ -249,7 +272,7 @@ Food.prototype.draw = function() {
 	ctx.fillStyle = "rgb(255, 0, 0)"
 
 	ctx.fillRect(food.xPos, food.yPos, cellWidth, cellHeight);
-}
+};
 
 // Increment score, update high score if needed, grow the snake, generate random coordinates 
 // for new piece of food and draw it.
@@ -278,29 +301,23 @@ Food.prototype.eat = function() {
 	}));
 	
 	food.draw();
-}
+};
 
 // Gets a random cell from the 18x18 cell play area. The play area does not include cells occupied by walls.
 Food.prototype.getRandom = function() {
-	// (cellWidth - 2) is 18 and is used because two of the cells in the 20 cell row belong to the walls.
-	// The play area is an 18 cell by 18 cell grid. The walls do not count as part of the play area.
+	// (cellWidth - 2) is 18 and is used because two of the cells in the 20 cell row/column belong to the walls,
+	// and as a result, should not be able to be chosen.
 	return Math.floor(Math.random() * (numCellsInRow - 2)) * cellWidth + cellWidth;
 };
 
-// Instantiate objects
+// Instantiate objects so that their properties and methods can be used throughout the program.
 const game = new Game();
 const snake = new Snake();
 const food = new Food();
 
-// Initialization
+// Initialize the game, preparing it to be played.
 game.initBeforeEachGame();
 game.initOnceOnLoad();
-
-function gameLoop(timestamp) {
-	clearCanvas();
-	food.draw();
-	snake.move();
-}
 
 // Keyboard controls
 window.addEventListener("keydown", function(e) {
@@ -381,7 +398,7 @@ window.addEventListener("keydown", function(e) {
 	}
 });
 
-// Create the border of the play area
+// Create the border of the play area. If the snake collides with this border, the game is over.
 function drawWalls() {
 	ctx.fillStyle = "rgb(0, 0, 0)";
 	for(let i = 0; i < width; i += cellWidth) {
@@ -392,12 +409,13 @@ function drawWalls() {
 	}
 }
 
-// Clears the whole 18x18 cell play area, leaving the walls in tact.
+// Clears the 18x18 cell play area, leaving the walls in tact. Since the walls are static and nothing
+// can ever appear above them, clearing the whole 20x20 canvas and redrawing the walls is not necessary.
 function clearCanvas() {
 	ctx.clearRect(cellWidth, cellHeight, width - (cellWidth * 2), height - (cellHeight * 2));
 }
 
-// Draw text on the canvas (used for keyboard control panel and game over panel)
+// Draw text on the canvas (used for keyboard control panel and game over panel).
 function drawText(text, font, color, xPos, yPos) {
 	ctx.fillStyle = color;
 	ctx.textAlign = "center";
