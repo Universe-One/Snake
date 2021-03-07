@@ -8,19 +8,20 @@
 
 // Some of the calculations in this program are done using cellWidth or numCellsInRow, but can just as easily
 // be done using cellHeight and numCellsInColumn since they are symmetric.
-const canvas = document.querySelector("#game-canvas");
-const ctx = canvas.getContext("2d");
+// The canvas element reference is named canvasElem instead of canvas because there is a canvas object named canvas.
+const canvasElem = document.querySelector("#game-canvas");
+const ctx = canvasElem.getContext("2d");
 const score = document.querySelector("#current-score");
 const highScore = document.querySelector("#high-score");
 
-const width = canvas.width;
-const height = canvas.height;
+const width = canvasElem.width;
+const height = canvasElem.height;
 const numCellsInRow = 20;
 const numCellsInColumn = 20;
-const cellWidth = canvas.width / numCellsInRow;
-const cellHeight = canvas.height / numCellsInColumn;
+const cellWidth = canvasElem.width / numCellsInRow;
+const cellHeight = canvasElem.height / numCellsInColumn;
 
-/*const c = {
+/*const canvas = {
 	width: canvas.width,
 	height: canvas.height,
 	numCellsInRow: 20,
@@ -30,10 +31,7 @@ const cellHeight = canvas.height / numCellsInColumn;
 	clearCanvas: function() {
 		ctx.clearRect(cellWidth, cellHeight, width - (cellWidth * 2), height - (cellHeight * 2));
 	}
-}
-
-console.log(c.clearCanvas());
-*/
+}*/
 
 // Game object contains game state and methods related to game state.
 function Game() {
@@ -53,12 +51,23 @@ Game.prototype.retrieveHighScore = function() {
 	highScore.textContent = `High Score: ${game.highScore}`;
 };
 
+// Create the border of the play area. If the snake collides with this border, the game is over.
+Game.prototype.drawWalls = function() {
+	ctx.fillStyle = "rgb(0, 0, 0)";
+	for(let i = 0; i < width; i += cellWidth) {
+		ctx.fillRect(i, 0, cellWidth, cellHeight);
+		ctx.fillRect(0, i, cellWidth, cellHeight);
+		ctx.fillRect(i, height - cellHeight, cellWidth, cellHeight);
+		ctx.fillRect(width - cellWidth, i, cellWidth, cellHeight);
+	}
+}
+
 // Retrieve high score from localStorage, draw walls, and draw the keyboard controls panel so the user
 // understands the controls. This method will be run one time when the game first loads, and will never
 // need to be run again.
 Game.prototype.initOnceOnLoad = function() {
 	game.retrieveHighScore();
-	drawWalls();
+	game.drawWalls();
 
 	ctx.fillStyle = "#CCCCCC";
 	ctx.fillRect(140, 40, 120, 120);
@@ -397,17 +406,6 @@ window.addEventListener("keydown", function(e) {
 		}
 	}
 });
-
-// Create the border of the play area. If the snake collides with this border, the game is over.
-function drawWalls() {
-	ctx.fillStyle = "rgb(0, 0, 0)";
-	for(let i = 0; i < width; i += cellWidth) {
-		ctx.fillRect(i, 0, cellWidth, cellHeight);
-		ctx.fillRect(0, i, cellWidth, cellHeight);
-		ctx.fillRect(i, height - cellHeight, cellWidth, cellHeight);
-		ctx.fillRect(width - cellWidth, i, cellWidth, cellHeight);
-	}
-}
 
 // Clears the 18x18 cell play area, leaving the walls in tact. Since the walls are static and nothing
 // can ever appear above them, clearing the whole 20x20 canvas and redrawing the walls is not necessary.
