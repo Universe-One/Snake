@@ -1,6 +1,6 @@
-import canvas, { ctx } from "/canvas.js";
-import snake from "/snake.js";
-import food from "/food.js";
+import canvas, { ctx } from "/js/canvas.js";
+import snake from "/js/snake.js";
+import food from "/js/food.js";
 
 const scoreElem = document.querySelector("#current-score");
 const highScoreElem = document.querySelector("#high-score");
