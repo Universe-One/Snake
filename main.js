@@ -1,4 +1,5 @@
 //TODO
+// MAKE ONE FINAL PASS THROUGH CODE AND COMMENTS TO ENSURE ACCURACY
 
 // Implement ES6 Modules
 // Refactor/tidy up code (get rid of global variables)
@@ -49,6 +50,7 @@ const game = {
 		this.highScore = 0;
 		highScoreElem.textContent = `High Score: ${this.highScore}`;
 	},
+
 	// Create the border of the play area. If the snake collides with this border, the game is over.
 	drawWalls: function() {
 		ctx.fillStyle = "rgb(0, 0, 0)";
@@ -59,6 +61,7 @@ const game = {
 			ctx.fillRect(width - cellWidth, i, cellWidth, cellHeight);
 		}
 	},
+
 	// Retrieve high score from localStorage, draw walls, and draw the keyboard controls panel so the user
 	// understands the controls. This method will be run one time when the game first loads, and will never
 	// need to be run again.
@@ -81,6 +84,7 @@ const game = {
 		drawArrowIcon("down", (width / 2) + 12.5, 132.5);
 		drawArrowIcon("left", (width / 2) + 37.5, 132.5);
 	},
+
 	// Clear the canvas, draw the snake, and draw the food. This method is called when the game first loads,
 	// and then every time the game is reset, so that the game may be played again.
 	initBeforeEachGame: function() {
@@ -88,6 +92,7 @@ const game = {
 		snake.draw();
 		food.draw();
 	},
+
 	// Clear the canvas, draw the piece of food, and move the snake. This is the game loop that is called by
 	// setInterval over and over again (after a specified delay) until the game is over.
 	loop: function(timestamp) {
@@ -95,6 +100,7 @@ const game = {
 		food.draw();
 		snake.move();
 	},
+
 	// Start the game loop and set the delay to whatever the game speed is (lower speed values make the game
 	// update faster). A game can only be started if there is no current game being played. One cannot play 
 	// multiple games at once. This is ensured by the fact that a new game may only begin when game.intervalId 
@@ -104,6 +110,7 @@ const game = {
 	startGame: function() {
 		this.intervalId = setInterval(this.loop, this.gameSpeed);
 	},
+
 	// Handle end-of-game operations
 	gameOver: function() {
 		this.isOver = true;
@@ -133,6 +140,7 @@ const game = {
 		drawText("Press Space", "1.2em monospace", "#000000", width / 2, height / 2 + 10);
 		drawText("to Restart", "1.2em monospace", "#000000", width / 2, height / 2 + 28);
 	},
+
 	// Add listener when game is over, allowing game to be reset when Space is pressed.
 	// Remove listener when Space is pressed and game is reset.
 	// Since the listener is added to the window object, game.reset() must be used.
@@ -142,6 +150,7 @@ const game = {
 			game.reset();
 		}
 	},
+
 	// Reset the game, preparing it to be played again.
 	reset: function() {
 		window.removeEventListener("keydown", this.resetListener);
@@ -168,13 +177,6 @@ const game = {
 	}
 }
 
-
-
-
-
-
-
-
 // Snake object contains state related to the snake and methods related to the snake.
 const snake = {
 	// An array of objects, each with xPos and yPos properties, are used to represent the snake's cells.
@@ -185,7 +187,7 @@ const snake = {
 			{xPos: 60, yPos: 200}],
 	direction: "right",
 	directionQueue: [],
-	// snake.oldTail is used to grow the snake when food is eaten and to draw the final state of the snake
+	// oldTail is used to grow the snake when food is eaten and to draw the final state of the snake
 	// if a collision occurs with the outer walls.
 	oldTail: null,
 
@@ -193,43 +195,44 @@ const snake = {
 	draw: function() {
 		ctx.fillStyle = "rgb(0, 192, 0)"
 		
-		snake.cells.forEach(function(element) {
+		this.cells.forEach(function(element) {
 			ctx.fillRect(element.xPos, element.yPos, cellWidth, cellHeight);
 		})
 	},
+
 	// Physically move the snake and handle operations related to the snake's movement such as eating food
 	// and detecting collision.
 	move: function() {
 		// If the the direction queue is not empty, take the next-in-line direction and apply it to the snake
 		// before removing it from the queue.
-		if (snake.directionQueue.length !== 0) {
-			snake.direction = snake.directionQueue[0];
-			snake.directionQueue.shift();
+		if (this.directionQueue.length !== 0) {
+			this.direction = this.directionQueue[0];
+			this.directionQueue.shift();
 		}
 
 		// Remove the last cell (the tail) from the cells array
-		snake.oldTail = snake.cells.pop();
+		this.oldTail = this.cells.pop();
 
 		// Attach a cell to the beginning of the cells array, giving the snake a new head.
 		// The removal of the snake's tail and attachment of a new head is what gives the appearance
 		// of movement.
-		if (snake.direction === "up") {
-			snake.cells.unshift({xPos: snake.cells[0].xPos, yPos: snake.cells[0].yPos - cellHeight});
-		} else if (snake.direction === "right") {
-			snake.cells.unshift({xPos: snake.cells[0].xPos + cellWidth, yPos: snake.cells[0].yPos});
-		} else if (snake.direction === "down") {
-			snake.cells.unshift({xPos: snake.cells[0].xPos, yPos: snake.cells[0].yPos + cellHeight});
-		} else if (snake.direction === "left") {
-			snake.cells.unshift({xPos: snake.cells[0].xPos - cellWidth, yPos: snake.cells[0].yPos});
+		if (this.direction === "up") {
+			this.cells.unshift({xPos: this.cells[0].xPos, yPos: this.cells[0].yPos - cellHeight});
+		} else if (this.direction === "right") {
+			this.cells.unshift({xPos: this.cells[0].xPos + cellWidth, yPos: this.cells[0].yPos});
+		} else if (this.direction === "down") {
+			this.cells.unshift({xPos: this.cells[0].xPos, yPos: this.cells[0].yPos + cellHeight});
+		} else if (this.direction === "left") {
+			this.cells.unshift({xPos: this.cells[0].xPos - cellWidth, yPos: this.cells[0].yPos});
 		}
 
 		// If snake's head occupies the same cell as a piece of food, eat it.
-		if (snake.cells[0].xPos === food.xPos && snake.cells[0].yPos === food.yPos) {
+		if (this.cells[0].xPos === food.xPos && this.cells[0].yPos === food.yPos) {
 			food.eat();
 		}
 
 		// Detect collision between the snake and itself and between the snake and the outer walls.
-		snake.detectCollision();
+		this.detectCollision();
 
 		// Call snake.draw() here if the game is not over. This is the default behavior. 
 		// If the game is over, snake.draw() is instead called from game.gameOver() before 
@@ -238,28 +241,28 @@ const snake = {
 		// to be drawn before the game over screen so the snake never renders above the
 		// game over screen.
 		if (!game.isOver) {
-			snake.draw();
+			this.draw();
 		}
 	},
 	// When snake.grow() is called from food.eat(), it reattaches the tail that was just removed
 	// this snake.move() step. This grows the snake by one unit rather than just moving it.
 	grow: function() {
-		snake.cells.push(snake.oldTail);
+		this.cells.push(this.oldTail);
 	},
 	// Check if snake's head occupies a cell which is also occupied by an outer wall or another snake cell.
 	// If it does, then the game is over.
 	detectCollision: function() {
 		// Detect collision with walls
-		if (snake.cells[0].xPos < cellWidth ||
-		snake.cells[0].xPos >= width - cellWidth ||
-		snake.cells[0].yPos < cellHeight ||
-		snake.cells[0].yPos >= height - cellHeight) {
+		if (this.cells[0].xPos < cellWidth ||
+		this.cells[0].xPos >= width - cellWidth ||
+		this.cells[0].yPos < cellHeight ||
+		this.cells[0].yPos >= height - cellHeight) {
 			game.gameOver();
 		}
 		// Detect collision with self
-		for (let i = 1; i < snake.cells.length; i++) {
-			if (snake.cells[0].xPos === snake.cells[i].xPos &&
-			snake.cells[0].yPos === snake.cells[i].yPos) {
+		for (let i = 1; i < this.cells.length; i++) {
+			if (this.cells[0].xPos === this.cells[i].xPos &&
+			this.cells[0].yPos === this.cells[i].yPos) {
 				game.gameOver();
 			}
 		}
@@ -276,7 +279,7 @@ const food = {
 	draw: function() {
 		ctx.fillStyle = "rgb(255, 0, 0)"
 
-		ctx.fillRect(food.xPos, food.yPos, cellWidth, cellHeight);
+		ctx.fillRect(this.xPos, this.yPos, cellWidth, cellHeight);
 	},
 	// Increment score, update high score if needed, grow the snake, generate random coordinates 
 	// for new piece of food and draw it.
@@ -298,13 +301,13 @@ const food = {
 		// choose another random cell. Continue this process until a cell is
 		// chosen which is not occupied by the snake. Draw the piece of food there.
 		do {
-			food.xPos = food.getRandom();
-			food.yPos = food.getRandom();
+			this.xPos = this.getRandom();
+			this.yPos = this.getRandom();
 		} while (snake.cells.some(function(element) {
-			return element.xPos === food.xPos && element.yPos === food.yPos;
+			return element.xPos === this.xPos && element.yPos === this.yPos;
 		}));
 		
-		food.draw();
+		this.draw();
 	},
 	// Gets a random cell from the 18x18 cell play area. The play area does not include cells occupied by walls.
 	getRandom: function() {
