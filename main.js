@@ -372,6 +372,8 @@ const food = {
 	},
 	// Increment score, update high score if needed, grow the snake, generate random coordinates 
 	// for new piece of food and draw it.
+
+	//BUG FOOD ISN'T GETTING NEW COORDS WHEN SPAWNING ON SNAKE
 	eat: function() {
 		game.score += 5;
 
@@ -393,7 +395,7 @@ const food = {
 			this.xPos = this.getRandom();
 			this.yPos = this.getRandom();
 		} while (snake.cells.some(function(element) {
-			return element.xPos === this.xPos && element.yPos === this.yPos;
+			return element.xPos === food.xPos && element.yPos === food.yPos;
 		}));
 		
 		this.draw();
