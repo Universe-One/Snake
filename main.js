@@ -18,19 +18,21 @@ const highScoreElem = document.querySelector("#high-score");
 const canvas = {
 	width: canvasElem.width,
 	height: canvasElem.height,
-	numCellsInRow: 20, // Value should match cellWidth divisor
-	numCellsinColumn: 20, // Value should match cellHeight divisor
+	numCellsInRow: 20, 
+	numCellsInColumn: 20,
+
 	// An object property cannot reference another property of the same object in its declaration
-	// using the this keyword. A way around this is to assign 
-	cellWidth: canvasElem.width / 20,
-	cellHeight: canvasElem.height / 20,
-	// Get this to work
-	/*get cellWidth() {
-		return canvasElem.width / this.numCellsInRow;
+	// using the this keyword. Therefore, canvasElem.width / this.numCellsInRow cannot be assigned to
+	// cellWidth through normal property assignment. Likewise, canvasElem.height / this.numCellsInColumn
+	// cannot be assigned directly to cellHeight. Using a getter function is a good workaround.
+	// Inside of an object, the this keyword simply refers to the global window object. However, inside
+	// of a method/function, the this keyword is set to the object that the method/function is called on.
+	get cellWidth() {
+		return this.width / this.numCellsInRow;
 	},
 	get cellHeight() {
-		return canvasElem.height / this.numCellsInColumn;
-	},*/
+		return this.height / this.numCellsInColumn;
+	},
 
 	// Clears the 18x18 cell play area, leaving the walls in tact. Since the walls are static and nothing
 	// can ever appear above them, clearing the whole 20x20 canvas and redrawing the walls is not necessary.
