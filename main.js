@@ -7,32 +7,119 @@
 // Add a canvas(or some other aptly named) object for clearcanvas, drawText, etc. to be methods of
 
 
-// Some of the calculations in this program are done using cellWidth or numCellsInRow, but can just as easily
-// be done using cellHeight and numCellsInColumn since they are symmetric.
+// Some of the calculations in this program are done using canvas.cellWidth or canvas.numCellsInRow, 
+// but can just as easily be done using canvas.cellHeight and canvas.numCellsInColumn since they are symmetric.
 // The element references have "Elem" suffixes to differentiate them from variables used in the program.
 const canvasElem = document.querySelector("#game-canvas");
 const ctx = canvasElem.getContext("2d");
 const scoreElem = document.querySelector("#current-score");
 const highScoreElem = document.querySelector("#high-score");
 
-const width = canvasElem.width;
-const height = canvasElem.height;
-const numCellsInRow = 20;
-const numCellsInColumn = 20;
-const cellWidth = canvasElem.width / numCellsInRow;
-const cellHeight = canvasElem.height / numCellsInColumn;
+const canvas = {
+	width: canvasElem.width,
+	height: canvasElem.height,
+	numCellsInRow: 20, // Value should match cellWidth divisor
+	numCellsinColumn: 20, // Value should match cellHeight divisor
+	// An object property cannot reference another property of the same object in its declaration
+	// using the this keyword. A way around this is to assign 
+	cellWidth: canvasElem.width / 20,
+	cellHeight: canvasElem.height / 20,
+	// Get this to work
+	/*get cellWidth() {
+		return canvasElem.width / this.numCellsInRow;
+	},
+	get cellHeight() {
+		return canvasElem.height / this.numCellsInColumn;
+	},*/
 
-/*const canvas = {
-	width: canvas.width,
-	height: canvas.height,
-	numCellsInRow: 20,
-	numCellsinColumn: 20,
-	cellWidth: canvas.width / numCellsInRow,
-	cellHeight: canvas.height / numCellsInColumn,
+	// Clears the 18x18 cell play area, leaving the walls in tact. Since the walls are static and nothing
+	// can ever appear above them, clearing the whole 20x20 canvas and redrawing the walls is not necessary.
 	clearCanvas: function() {
-		ctx.clearRect(cellWidth, cellHeight, width - (cellWidth * 2), height - (cellHeight * 2));
+		ctx.clearRect(this.cellWidth, this.cellHeight, 
+					  this.width - (this.cellWidth * 2), this.height - (this.cellHeight * 2));
+	},
+
+	// Draw text on the canvas (used for keyboard control panel and game over panel).
+	drawText: function(text, font, color, xPos, yPos) {
+		ctx.fillStyle = color;
+		ctx.textAlign = "center";
+		ctx.textBaseline = "middle";
+		ctx.font = font;
+		ctx.fillText(text, xPos, yPos);
+	},
+
+	// Draw arrow icons to represent arrow keys. These are drawn to the right of the
+	// WASD key icons. The values chosen are intended to keep spacing symmetric.
+	drawArrowIcon: function(direction, xPos, yPos) {
+		let xOffsetStem;
+		let yOffsetStem;
+		let xOffsetHead;
+		let yOffsetHead;
+		let headPoint;
+		let yOffsetExtra = 0;
+		let xOffsetExtra = 0;
+		switch (direction) {
+			// Set variables related to drawing arrow heads and arrow stems, then draw arrow heads.
+			case "up":
+				xOffsetStem = 1;
+				yOffsetStem = 8;
+				xOffsetHead = 5;
+				yOffsetHead = 4;
+				headPoint = yOffsetHead - 6;
+				ctx.beginPath();
+				ctx.moveTo(xPos - xOffsetHead, (yPos - yOffsetStem) + yOffsetHead);
+				ctx.lineTo(xPos, (yPos - yOffsetStem) + headPoint);
+				ctx.lineTo(xPos + xOffsetHead, (yPos - yOffsetStem) + yOffsetHead);
+				ctx.fill();
+				break;
+			case "right":
+				xOffsetStem = 8;
+				yOffsetStem = 1;
+				xOffsetHead = -4;
+				yOffsetHead = 5;
+				headPoint = xOffsetHead + 6;
+				xOffsetExtra = 2; // move 2 pixels to the left for symmetry of pixel spacing
+				ctx.beginPath();
+				ctx.moveTo(((xPos + xOffsetStem) + xOffsetHead) - xOffsetExtra, yPos - yOffsetHead);
+				ctx.lineTo(((xPos + xOffsetStem) + headPoint) - xOffsetExtra , yPos);
+				ctx.lineTo(((xPos + xOffsetStem) + xOffsetHead) - xOffsetExtra, yPos + yOffsetHead);
+				ctx.fill();
+				break;
+			case "down":
+				xOffsetStem = 1;
+				yOffsetStem = 8;
+				xOffsetHead = 5;
+				yOffsetHead = -4;
+				headPoint = yOffsetHead + 6;
+				yOffsetExtra = 2; // move 2 pixels up to vertically align down arrow with other arrows
+				ctx.beginPath();
+				ctx.moveTo(xPos - xOffsetHead, ((yPos + yOffsetStem) + yOffsetHead) - yOffsetExtra);
+				ctx.lineTo(xPos, ((yPos + yOffsetStem) + headPoint) - yOffsetExtra);
+				ctx.lineTo(xPos + xOffsetHead, ((yPos + yOffsetStem) + yOffsetHead) - yOffsetExtra);
+				ctx.fill();
+				break;
+			case "left":
+				xOffsetStem = 8;
+				yOffsetStem = 1;
+				xOffsetHead = 4;
+				yOffsetHead = 5;
+				headPoint = xOffsetHead - 6;
+				ctx.beginPath();
+				ctx.moveTo(((xPos - xOffsetStem) + xOffsetHead) - xOffsetExtra, yPos - yOffsetHead);
+				ctx.lineTo(((xPos - xOffsetStem) + headPoint) - xOffsetExtra , yPos);
+				ctx.lineTo(((xPos - xOffsetStem) + xOffsetHead) - xOffsetExtra, yPos + yOffsetHead);
+				ctx.fill();
+				break;
+		}
+		// Draw arrow stems
+		ctx.beginPath();
+		ctx.moveTo(((xPos) - xOffsetStem) - xOffsetExtra, (yPos - yOffsetStem) - yOffsetExtra);
+		ctx.lineTo(((xPos) - xOffsetStem) - xOffsetExtra, (yPos + yOffsetStem) - yOffsetExtra);
+		ctx.lineTo(((xPos) + xOffsetStem) - xOffsetExtra, (yPos + yOffsetStem) - yOffsetExtra);
+		ctx.lineTo(((xPos) + xOffsetStem) - xOffsetExtra, (yPos - yOffsetStem) - yOffsetExtra);
+		ctx.fill();
 	}
-}*/
+}
 
 // Game object contains game state and methods related to game state.
 const game = {
@@ -54,11 +141,11 @@ const game = {
 	// Create the border of the play area. If the snake collides with this border, the game is over.
 	drawWalls: function() {
 		ctx.fillStyle = "rgb(0, 0, 0)";
-		for(let i = 0; i < width; i += cellWidth) {
-			ctx.fillRect(i, 0, cellWidth, cellHeight);
-			ctx.fillRect(0, i, cellWidth, cellHeight);
-			ctx.fillRect(i, height - cellHeight, cellWidth, cellHeight);
-			ctx.fillRect(width - cellWidth, i, cellWidth, cellHeight);
+		for(let i = 0; i < canvas.width; i += canvas.cellWidth) {
+			ctx.fillRect(i, 0, canvas.cellWidth, canvas.cellHeight);
+			ctx.fillRect(0, i, canvas.cellWidth, canvas.cellHeight);
+			ctx.fillRect(i, canvas.height - canvas.cellHeight, canvas.cellWidth, canvas.cellHeight);
+			ctx.fillRect(canvas.width - canvas.cellWidth, i, canvas.cellWidth, canvas.cellHeight);
 		}
 	},
 
@@ -72,23 +159,23 @@ const game = {
 		ctx.fillStyle = "#CCCCCC";
 		ctx.fillRect(140, 40, 120, 120);
 		
-		drawText("W", "2em monospace", "#000000", (width / 2) - 37.5, 67.5);
-		drawText("A", "2em monospace", "#000000", (width / 2) - 12.5, 67.5);
-		drawText("S", "2em monospace", "#000000", (width / 2) + 12.5, 67.5);
-		drawText("D", "2em monospace", "#000000", (width / 2) + 37.5, 67.5);
+		canvas.drawText("W", "2em monospace", "#000000", (canvas.width / 2) - 37.5, 67.5);
+		canvas.drawText("A", "2em monospace", "#000000", (canvas.width / 2) - 12.5, 67.5);
+		canvas.drawText("S", "2em monospace", "#000000", (canvas.width / 2) + 12.5, 67.5);
+		canvas.drawText("D", "2em monospace", "#000000", (canvas.width / 2) + 37.5, 67.5);
 		
-		drawText("or", "1.5em monospace", "#000000", (width / 2), 100);
+		canvas.drawText("or", "1.5em monospace", "#000000", (canvas.width / 2), 100);
 
-		drawArrowIcon("up", (width / 2) - 37.5, 132.5);
-		drawArrowIcon("right", (width / 2) - 12.5, 132.5);
-		drawArrowIcon("down", (width / 2) + 12.5, 132.5);
-		drawArrowIcon("left", (width / 2) + 37.5, 132.5);
+		canvas.drawArrowIcon("up", (canvas.width / 2) - 37.5, 132.5);
+		canvas.drawArrowIcon("right", (canvas.width / 2) - 12.5, 132.5);
+		canvas.drawArrowIcon("down", (canvas.width / 2) + 12.5, 132.5);
+		canvas.drawArrowIcon("left", (canvas.width / 2) + 37.5, 132.5);
 	},
 
 	// Clear the canvas, draw the snake, and draw the food. This method is called when the game first loads,
 	// and then every time the game is reset, so that the game may be played again.
 	initBeforeEachGame: function() {
-		clearCanvas();
+		canvas.clearCanvas();
 		snake.draw();
 		food.draw();
 	},
@@ -96,7 +183,7 @@ const game = {
 	// Clear the canvas, draw the piece of food, and move the snake. This is the game loop that is called by
 	// setInterval over and over again (after a specified delay) until the game is over.
 	loop: function(timestamp) {
-		clearCanvas();
+		canvas.clearCanvas();
 		food.draw();
 		snake.move();
 	},
@@ -136,9 +223,9 @@ const game = {
 		ctx.fillRect(100, 140, 200, 120);
 
 		// Prompt user to start a new game by pressing Space.
-		drawText("Game Over!", "2em monospace", "#000000", width / 2, height / 2 - 20);
-		drawText("Press Space", "1.2em monospace", "#000000", width / 2, height / 2 + 10);
-		drawText("to Restart", "1.2em monospace", "#000000", width / 2, height / 2 + 28);
+		canvas.drawText("Game Over!", "2em monospace", "#000000", canvas.width / 2, canvas.height / 2 - 20);
+		canvas.drawText("Press Space", "1.2em monospace", "#000000", canvas.width / 2, canvas.height / 2 + 10);
+		canvas.drawText("to Restart", "1.2em monospace", "#000000", canvas.width / 2, canvas.height / 2 + 28);
 	},
 
 	// Add listener when game is over, allowing game to be reset when Space is pressed.
@@ -167,7 +254,7 @@ const game = {
 		snake.directionQueue = [];
 		snake.oldTail = null;
 		food.xPos = 320;
-		food.yPos = height / 2;
+		food.yPos = canvas.height / 2;
 
 		// Set the game back to the state it was in when it first loaded, i.e., with the snake still
 		// and awaiting user input. The only difference is that the keyboard control panel will not be displayed
@@ -196,7 +283,7 @@ const snake = {
 		ctx.fillStyle = "rgb(0, 192, 0)"
 		
 		this.cells.forEach(function(element) {
-			ctx.fillRect(element.xPos, element.yPos, cellWidth, cellHeight);
+			ctx.fillRect(element.xPos, element.yPos, canvas.cellWidth, canvas.cellHeight);
 		})
 	},
 
@@ -217,13 +304,13 @@ const snake = {
 		// The removal of the snake's tail and attachment of a new head is what gives the appearance
 		// of movement.
 		if (this.direction === "up") {
-			this.cells.unshift({xPos: this.cells[0].xPos, yPos: this.cells[0].yPos - cellHeight});
+			this.cells.unshift({xPos: this.cells[0].xPos, yPos: this.cells[0].yPos - canvas.cellHeight});
 		} else if (this.direction === "right") {
-			this.cells.unshift({xPos: this.cells[0].xPos + cellWidth, yPos: this.cells[0].yPos});
+			this.cells.unshift({xPos: this.cells[0].xPos + canvas.cellWidth, yPos: this.cells[0].yPos});
 		} else if (this.direction === "down") {
-			this.cells.unshift({xPos: this.cells[0].xPos, yPos: this.cells[0].yPos + cellHeight});
+			this.cells.unshift({xPos: this.cells[0].xPos, yPos: this.cells[0].yPos + canvas.cellHeight});
 		} else if (this.direction === "left") {
-			this.cells.unshift({xPos: this.cells[0].xPos - cellWidth, yPos: this.cells[0].yPos});
+			this.cells.unshift({xPos: this.cells[0].xPos - canvas.cellWidth, yPos: this.cells[0].yPos});
 		}
 
 		// If snake's head occupies the same cell as a piece of food, eat it.
@@ -253,16 +340,16 @@ const snake = {
 	// If it does, then the game is over.
 	detectCollision: function() {
 		// Detect collision with walls
-		if (this.cells[0].xPos < cellWidth ||
-		this.cells[0].xPos >= width - cellWidth ||
-		this.cells[0].yPos < cellHeight ||
-		this.cells[0].yPos >= height - cellHeight) {
+		if (this.cells[0].xPos < canvas.cellWidth ||
+		this.cells[0].xPos >= canvas.width - canvas.cellWidth ||
+		this.cells[0].yPos < canvas.cellHeight ||
+		this.cells[0].yPos >= canvas.height - canvas.cellHeight) {
 			game.gameOver();
 		}
 		// Detect collision with self
 		for (let i = 1; i < this.cells.length; i++) {
 			if (this.cells[0].xPos === this.cells[i].xPos &&
-			this.cells[0].yPos === this.cells[i].yPos) {
+				this.cells[0].yPos === this.cells[i].yPos) {
 				game.gameOver();
 			}
 		}
@@ -272,14 +359,14 @@ const snake = {
 // Food object contains position of food and methods related to food.
 const food = {
 	xPos: 320,
-	yPos: height / 2,
+	yPos: canvas.height / 2,
 
 	// If this is the first time drawing food, draw it at the specified default location. 
 	// Otherwise, draw it at a random location.
 	draw: function() {
 		ctx.fillStyle = "rgb(255, 0, 0)"
 
-		ctx.fillRect(this.xPos, this.yPos, cellWidth, cellHeight);
+		ctx.fillRect(this.xPos, this.yPos, canvas.cellWidth, canvas.cellHeight);
 	},
 	// Increment score, update high score if needed, grow the snake, generate random coordinates 
 	// for new piece of food and draw it.
@@ -311,9 +398,9 @@ const food = {
 	},
 	// Gets a random cell from the 18x18 cell play area. The play area does not include cells occupied by walls.
 	getRandom: function() {
-		// (cellWidth - 2) is 18 and is used because two of the cells in the 20 cell row/column belong to the walls,
-		// and as a result, should not be able to be chosen.
-		return Math.floor(Math.random() * (numCellsInRow - 2)) * cellWidth + cellWidth;
+		// (canvas.numcellsInRow - 2) is 18 and is used because two of the cells in the 20 cell row/column 
+		// belong to the walls, and as a result, should not be able to be chosen.
+		return Math.floor(Math.random() * (canvas.numCellsInRow - 2)) * canvas.cellWidth + canvas.cellWidth;
 	}
 }
 
@@ -344,7 +431,7 @@ window.addEventListener("keydown", function(e) {
 				// add the appropriate direction to the queue if the snake is not currently 
 				// moving in or opposite that direction.
 				if (snake.direction !== "up" && snake.direction !== "down" &&
-				snake.directionQueue.length === 0) {
+					snake.directionQueue.length === 0) {
 					snake.directionQueue.push("up");
 				}
 				// When a directional button is pressed and there is something in the queue,
@@ -353,7 +440,7 @@ window.addEventListener("keydown", function(e) {
 				// A queue should not be allowed to look like ["up", "up"], and this is what
 				// prevents that.
 				if (snake.directionQueue[0] !== "up" && snake.directionQueue[0] !== "down" &&
-				snake.directionQueue.length > 0) {
+					snake.directionQueue.length > 0) {
 					snake.directionQueue.push("up");
 				}
 				break;
@@ -363,11 +450,11 @@ window.addEventListener("keydown", function(e) {
 					game.startGame();
 				}
 				if (snake.direction !== "right" && snake.direction !== "left" &&
-				snake.directionQueue.length === 0) {
+					snake.directionQueue.length === 0) {
 					snake.directionQueue.push("right");
 				}
 				if (snake.directionQueue[0] !== "right" && snake.directionQueue[0] !== "left" &&
-				snake.directionQueue.length > 0) {
+					snake.directionQueue.length > 0) {
 					snake.directionQueue.push("right");
 				}
 				break;
@@ -377,112 +464,25 @@ window.addEventListener("keydown", function(e) {
 					game.startGame();
 				}
 				if (snake.direction !== "down" && snake.direction !== "up" &&
-				snake.directionQueue.length === 0) {
+					snake.directionQueue.length === 0) {
 					snake.directionQueue.push("down");
 				}
 				if (snake.directionQueue[0] !== "down" && snake.directionQueue[0] !== "up" &&
-				snake.directionQueue.length > 0) {
+					snake.directionQueue.length > 0) {
 					snake.directionQueue.push("down");
 				}
 				break;
 			case "KeyA":
 			case "ArrowLeft":
 				if (snake.direction !== "left" && snake.direction !== "right" &&
-				snake.directionQueue.length === 0) {
+					snake.directionQueue.length === 0) {
 					snake.directionQueue.push("left");
 				}
 				if (snake.directionQueue[0] !== "left" && snake.directionQueue[0] !== "right" &&
-				snake.directionQueue.length > 0) {
+					snake.directionQueue.length > 0) {
 					snake.directionQueue.push("left");
 				}
 				break;
 		}
 	}
 });
-
-// Clears the 18x18 cell play area, leaving the walls in tact. Since the walls are static and nothing
-// can ever appear above them, clearing the whole 20x20 canvas and redrawing the walls is not necessary.
-function clearCanvas() {
-	ctx.clearRect(cellWidth, cellHeight, width - (cellWidth * 2), height - (cellHeight * 2));
-}
-
-// Draw text on the canvas (used for keyboard control panel and game over panel).
-function drawText(text, font, color, xPos, yPos) {
-	ctx.fillStyle = color;
-	ctx.textAlign = "center";
-	ctx.textBaseline = "middle";
-	ctx.font = font;
-	ctx.fillText(text, xPos, yPos);
-}
-
-// Draw arrow icons to represent arrow keys. These are drawn to the right of the
-// WASD key icons. The values chosen are intended to keep spacing symmetric.
-function drawArrowIcon(direction, xPos, yPos) {
-	let xOffsetStem;
-	let yOffsetStem;
-	let xOffsetHead;
-	let yOffsetHead;
-	let headPoint;
-	let yOffsetExtra = 0;
-	let xOffsetExtra = 0;
-	switch (direction) {
-		// Set variables related to drawing arrow heads and arrow stems, then draw arrow heads.
-		case "up":
-			xOffsetStem = 1;
-			yOffsetStem = 8;
-			xOffsetHead = 5;
-			yOffsetHead = 4;
-			headPoint = yOffsetHead - 6;
-			ctx.beginPath();
-			ctx.moveTo(xPos - xOffsetHead, (yPos - yOffsetStem) + yOffsetHead);
-			ctx.lineTo(xPos, (yPos - yOffsetStem) + headPoint);
-			ctx.lineTo(xPos + xOffsetHead, (yPos - yOffsetStem) + yOffsetHead);
-			ctx.fill();
-			break;
-		case "right":
-			xOffsetStem = 8;
-			yOffsetStem = 1;
-			xOffsetHead = -4;
-			yOffsetHead = 5;
-			headPoint = xOffsetHead + 6;
-			xOffsetExtra = 2; // move 2 pixels to the left for symmetry of pixel spacing
-			ctx.beginPath();
-			ctx.moveTo(((xPos + xOffsetStem) + xOffsetHead) - xOffsetExtra, yPos - yOffsetHead);
-			ctx.lineTo(((xPos + xOffsetStem) + headPoint) - xOffsetExtra , yPos);
-			ctx.lineTo(((xPos + xOffsetStem) + xOffsetHead) - xOffsetExtra, yPos + yOffsetHead);
-			ctx.fill();
-			break;
-		case "down":
-			xOffsetStem = 1;
-			yOffsetStem = 8;
-			xOffsetHead = 5;
-			yOffsetHead = -4;
-			headPoint = yOffsetHead + 6;
-			yOffsetExtra = 2; // move 2 pixels up to vertically align down arrow with other arrows
-			ctx.beginPath();
-			ctx.moveTo(xPos - xOffsetHead, ((yPos + yOffsetStem) + yOffsetHead) - yOffsetExtra);
-			ctx.lineTo(xPos, ((yPos + yOffsetStem) + headPoint) - yOffsetExtra);
-			ctx.lineTo(xPos + xOffsetHead, ((yPos + yOffsetStem) + yOffsetHead) - yOffsetExtra);
-			ctx.fill();
-			break;
-		case "left":
-			xOffsetStem = 8;
-			yOffsetStem = 1;
-			xOffsetHead = 4;
-			yOffsetHead = 5;
-			headPoint = xOffsetHead - 6;
-			ctx.beginPath();
-			ctx.moveTo(((xPos - xOffsetStem) + xOffsetHead) - xOffsetExtra, yPos - yOffsetHead);
-			ctx.lineTo(((xPos - xOffsetStem) + headPoint) - xOffsetExtra , yPos);
-			ctx.lineTo(((xPos - xOffsetStem) + xOffsetHead) - xOffsetExtra, yPos + yOffsetHead);
-			ctx.fill();
-			break;
-	}
-	// Draw arrow stems
-	ctx.beginPath();
-	ctx.moveTo(((xPos) - xOffsetStem) - xOffsetExtra, (yPos - yOffsetStem) - yOffsetExtra);
-	ctx.lineTo(((xPos) - xOffsetStem) - xOffsetExtra, (yPos + yOffsetStem) - yOffsetExtra);
-	ctx.lineTo(((xPos) + xOffsetStem) - xOffsetExtra, (yPos + yOffsetStem) - yOffsetExtra);
-	ctx.lineTo(((xPos) + xOffsetStem) - xOffsetExtra, (yPos - yOffsetStem) - yOffsetExtra);
-	ctx.fill();
-}
