@@ -5,10 +5,10 @@
 // Some of the calculations in this program are done using canvas.cellWidth or canvas.numCellsInRow, 
 // but can just as easily be done using canvas.cellHeight and canvas.numCellsInColumn since they are symmetric.
 
-import canvas from "/js/canvas.js"
-import game from "/js/game.js";
-import snake from "/js/snake.js";
-import food from "/js/food.js";
+import canvas from "./canvas.js"
+import game from "./game.js";
+import snake from "./snake.js";
+import food from "./food.js";
 
 // Initialize the game, preparing it to be played.
 game.initBeforeEachGame();

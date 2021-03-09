@@ -1,6 +1,6 @@
-import canvas, { ctx } from "/js/canvas.js";
-import game, { scoreElem, highScoreElem } from "/js/game.js";
-import snake from "/js/snake.js";
+import canvas, { ctx } from "./canvas.js";
+import game, { scoreElem, highScoreElem } from "./game.js";
+import snake from "./snake.js";
 
 // Food object contains position of food and methods related to food.
 const food = {

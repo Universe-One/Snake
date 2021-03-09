@@ -1,6 +1,6 @@
-import canvas, { ctx } from "/js/canvas.js";
-import game from "/js/game.js";
-import food from "/js/food.js";
+import canvas, { ctx } from "./canvas.js";
+import game from "./game.js";
+import food from "./food.js";
 
 // Snake object contains state related to the snake and methods related to the snake.
 const snake = {
