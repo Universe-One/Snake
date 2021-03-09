@@ -2,7 +2,7 @@ import canvas, { ctx } from "./canvas.js";
 import game from "./game.js";
 import food from "./food.js";
 
-// Snake object contains state related to the snake and methods related to the snake.
+// snake object contains state related to the snake and methods related to the snake.
 const snake = {
 	// An array of objects, each with xPos and yPos properties, are used to represent the snake's cells.
 	// cells[0] is the snake's head and cells[cells.length - 1] is the snake's tail.
@@ -16,7 +16,7 @@ const snake = {
 	// if a collision occurs with the outer walls.
 	oldTail: null,
 
-	// Take every cell in the snake object and draw it according to its x and y position
+	// Take every cell in the snake object and draw them according to their x and y positions
 	draw: function() {
 		ctx.fillStyle = "rgb(0, 192, 0)"
 		

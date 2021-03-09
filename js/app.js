@@ -1,14 +1,10 @@
-// LIVE DEMO IS BROKEN 404
-
-
-
-// Some of the calculations in this program are done using canvas.cellWidth or canvas.numCellsInRow, 
-// but can just as easily be done using canvas.cellHeight and canvas.numCellsInColumn since they are symmetric.
-
 import canvas from "./canvas.js"
 import game from "./game.js";
 import snake from "./snake.js";
 import food from "./food.js";
+
+// Some of the calculations in this program are done using canvas.cellWidth or canvas.numCellsInRow, 
+// but can just as easily be done using canvas.cellHeight and canvas.numCellsInColumn since they are symmetric.
 
 // Initialize the game, preparing it to be played.
 game.initBeforeEachGame();

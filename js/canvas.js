@@ -2,9 +2,7 @@
 const canvasElem = document.querySelector("#game-canvas");
 const ctx = canvasElem.getContext("2d");
 
-
-
-
+// canvas object contains variables related to the canvas and methods which affect the canvas.
 const canvas = {
 	width: canvasElem.width,
 	height: canvasElem.height,

@@ -2,7 +2,7 @@ import canvas, { ctx } from "./canvas.js";
 import game, { scoreElem, highScoreElem } from "./game.js";
 import snake from "./snake.js";
 
-// Food object contains position of food and methods related to food.
+// food object contains position of food and methods related to food.
 const food = {
 	xPos: 320,
 	yPos: canvas.height / 2,
@@ -14,10 +14,9 @@ const food = {
 
 		ctx.fillRect(this.xPos, this.yPos, canvas.cellWidth, canvas.cellHeight);
 	},
+
 	// Increment score, update high score if needed, grow the snake, generate random coordinates 
 	// for new piece of food and draw it.
-
-	//BUG FOOD ISN'T GETTING NEW COORDS WHEN SPAWNING ON SNAKE
 	eat: function() {
 		game.score += 5;
 
@@ -27,6 +26,7 @@ const food = {
 			localStorage.setItem("highScore", game.highScore);
 		}
 
+		// Update score and high score text with current values
 		scoreElem.textContent = `Score: ${game.score}`;
 		highScoreElem.textContent = `High Score: ${game.highScore}`;
 
@@ -44,7 +44,7 @@ const food = {
 		
 		this.draw();
 	},
-	// Gets a random cell from the 18x18 cell play area. The play area does not include cells occupied by walls.
+	// Get a random cell from the 18x18 cell play area. The play area does not include cells occupied by walls.
 	getRandom: function() {
 		// (canvas.numcellsInRow - 2) is 18 and is used because two of the cells in the 20 cell row/column 
 		// belong to the walls, and as a result, should not be able to be chosen.

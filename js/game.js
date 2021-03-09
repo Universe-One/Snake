@@ -2,15 +2,16 @@ import canvas, { ctx } from "./canvas.js";
 import snake from "./snake.js";
 import food from "./food.js";
 
+// The element references have "Elem" suffixes to differentiate them from variables used in the program.
 const scoreElem = document.querySelector("#current-score");
 const highScoreElem = document.querySelector("#high-score");
 
-// Game object contains game state and methods related to game state.
+// game object contains game state and methods related to game state.
 const game = {
 	isOver: false,
 	score: 0,
 	highScore: 0,
-	gameSpeed: 100,
+	gameSpeed: 100, // Lower speed values make the game update faster
 	intervalId: null,
 
 	// If there is a stored high score, retrieve it. Otherwise, set high score to 0.
@@ -115,7 +116,7 @@ const game = {
 	// Add listener when game is over, allowing game to be reset when Space is pressed.
 	// Remove listener when Space is pressed and game is reset.
 	// Since the listener is added to the window object, game.reset() must be used.
-	// this.reset() does not work because the keyword: this refers to the window object.
+	// this.reset() does not work because the keyword this refers to the window object.
 	resetListener: function(e) {
 		if (e.code === "Space") {
 			game.reset();
