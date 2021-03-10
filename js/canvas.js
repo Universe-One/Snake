@@ -24,7 +24,7 @@ const canvas = {
 
 	// Clears the 18x18 cell play area, leaving the walls in tact. Since the walls are static and nothing
 	// can ever appear above them, clearing the whole 20x20 canvas and redrawing the walls is not necessary.
-	clearCanvas: function() {
+	clear: function() {
 		ctx.clearRect(this.cellWidth, this.cellHeight, 
 					  this.width - (this.cellWidth * 2), this.height - (this.cellHeight * 2));
 	},

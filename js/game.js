@@ -60,7 +60,7 @@ const game = {
 	// Clear the canvas, draw the snake, and draw the food. This method is called when the game first loads,
 	// and then every time the game is reset, so that the game may be played again.
 	initBeforeEachGame: function() {
-		canvas.clearCanvas();
+		canvas.clear();
 		snake.draw();
 		food.draw();
 	},
@@ -68,7 +68,7 @@ const game = {
 	// Clear the canvas, draw the piece of food, and move the snake. This is the game loop that is called by
 	// setInterval over and over again (after a specified delay) until the game is over.
 	loop: function(timestamp) {
-		canvas.clearCanvas();
+		canvas.clear();
 		food.draw();
 		snake.move();
 	},
