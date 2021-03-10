@@ -15,10 +15,11 @@ const snake = {
 	// oldTail is used to grow the snake when food is eaten and to draw the final state of the snake
 	// if a collision occurs with the outer walls.
 	oldTail: null,
+	color: "rgb(0, 192, 0)",
 
 	// Take every cell in the snake object and draw them according to their x and y positions
 	draw: function() {
-		ctx.fillStyle = "rgb(0, 192, 0)"
+		ctx.fillStyle = this.color;
 		
 		this.cells.forEach(function(element) {
 			ctx.fillRect(element.xPos, element.yPos, canvas.cellWidth, canvas.cellHeight);
