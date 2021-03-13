@@ -20,7 +20,7 @@ const food = {
 	eat: function() {
 		game.score += 5;
 
-		if (game.highScore <= game.score) {
+		if (game.highScore < game.score) {
 			game.highScore = game.score;
 
 			localStorage.setItem("highScore", game.highScore);
