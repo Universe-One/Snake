@@ -40,7 +40,7 @@ const canvas = {
 
 	// Draw arrow icons to represent arrow keys. These are drawn to the right of the
 	// WASD key icons. The values chosen are intended to keep spacing symmetric.
-	drawArrowIcon: function(direction, xPos, yPos) {
+	drawArrowIcon: function(direction, color, xPos, yPos) {
 		let xOffsetStem;
 		let yOffsetStem;
 		let xOffsetHead;
@@ -48,6 +48,7 @@ const canvas = {
 		let headPoint;
 		let yOffsetExtra = 0;
 		let xOffsetExtra = 0;
+		ctx.fillStyle = color;
 		switch (direction) {
 			// Set variables related to drawing arrow heads and arrow stems, then draw arrow heads.
 			case "up":

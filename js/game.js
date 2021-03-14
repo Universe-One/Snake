@@ -51,10 +51,10 @@ const game = {
 		
 		canvas.drawText("or", "1.5em monospace", "#000000", (canvas.width / 2), 100);
 
-		canvas.drawArrowIcon("up", (canvas.width / 2) - 37.5, 132.5);
-		canvas.drawArrowIcon("right", (canvas.width / 2) - 12.5, 132.5);
-		canvas.drawArrowIcon("down", (canvas.width / 2) + 12.5, 132.5);
-		canvas.drawArrowIcon("left", (canvas.width / 2) + 37.5, 132.5);
+		canvas.drawArrowIcon("up", "#000000", (canvas.width / 2) - 37.5, 132.5);
+		canvas.drawArrowIcon("right", "#000000", (canvas.width / 2) - 12.5, 132.5);
+		canvas.drawArrowIcon("down", "#000000", (canvas.width / 2) + 12.5, 132.5);
+		canvas.drawArrowIcon("left", "#000000", (canvas.width / 2) + 37.5, 132.5);
 	},
 
 	// Clear the canvas, draw the snake, and draw the food. This method is called when the game first loads,
