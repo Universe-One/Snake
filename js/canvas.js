@@ -50,7 +50,7 @@ const canvas = {
 		let xOffsetExtra = 0;
 		ctx.fillStyle = color;
 		switch (direction) {
-			// Set variables related to drawing arrow heads and arrow stems, then draw arrow heads.
+			// Set variables related to drawing arrow head and arrow stem, then draw arrow head.
 			case "up":
 				xOffsetStem = 1;
 				yOffsetStem = 8;
@@ -102,7 +102,7 @@ const canvas = {
 				ctx.fill();
 				break;
 		}
-		// Draw arrow stems
+		// Draw arrow stem
 		ctx.beginPath();
 		ctx.moveTo(((xPos) - xOffsetStem) - xOffsetExtra, (yPos - yOffsetStem) - yOffsetExtra);
 		ctx.lineTo(((xPos) - xOffsetStem) - xOffsetExtra, (yPos + yOffsetStem) - yOffsetExtra);
