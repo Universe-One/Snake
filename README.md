@@ -19,6 +19,7 @@ Space (when game is over) - Restart Game
 * JavaScript
 * Canvas API
 * Web Storage API
+* ES6 Modules
 
 ## License
 Licensed under the [MIT License](LICENSE)
